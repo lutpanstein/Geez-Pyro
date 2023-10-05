@@ -30,38 +30,55 @@ async def stats(client: Client, message: Message):
     b = 0
     a_chat = 0
     Meh = await client.get_me()
+
+    # List to store information of groups and supergroups
+    group_info = []
+
     async for dialog in client.get_dialogs():
         if dialog.chat.type == enums.ChatType.PRIVATE:
             u += 1
         elif dialog.chat.type == enums.ChatType.BOT:
             b += 1
-        elif dialog.chat.type == enums.ChatType.GROUP:
-            g += 1
-        elif dialog.chat.type == enums.ChatType.SUPERGROUP:
-            sg += 1
-            user_s = await dialog.chat.get_member(int(Meh.id))
-            if user_s.status in (
-                enums.ChatMemberStatus.OWNER,
-                enums.ChatMemberStatus.ADMINISTRATOR,
-            ):
-                a_chat += 1
+        elif dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+            
+            group_info.append((dialog.chat.id, dialog.chat.title))
+
+            if dialog.chat.type == enums.ChatType.SUPERGROUP:
+                sg += 1
+                user_s = await dialog.chat.get_member(int(Meh.id))
+                if user_s.status in (
+                    enums.ChatMemberStatus.OWNER,
+                    enums.ChatMemberStatus.ADMINISTRATOR,
+                ):
+                    a_chat += 1
         elif dialog.chat.type == enums.ChatType.CHANNEL:
             c += 1
 
+    group_info = group_info[:20]
+
     end = datetime.now()
     ms = (end - start).seconds
+
+    group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
+
     await Man.edit_text(
-        """`Status akun anda, berhasil diambil dalam {} detik`
-` {} Pesan Pribadi.`
-`berada di {} Groups.`
-`berada {} Super Groups.`
-`berada {} Channels.`
-`menjadi admin di {} Chats.`
-`Bots = {}`""".format(
-            ms, u, g, sg, c, a_chat, b
-        )
+        f"""`Status akun anda, berhasil diambil dalam {ms} detik`
+        ` {u} Pesan Pribadi.`
+        `berada di {g} Groups.`
+        `berada {sg} Super Groups.`
+        `berada {c} Channels.`
+        `menjadi admin di {a_chat} Chats.`
+        `Bots = {b}`
+        `Info Grup:\n{group_info_text}`"""
     )
 
+
+add_command_help(
+    "stats",
+    [
+        [f"{cmds}stats", "Mengambil info akun anda."],
+    ]
+)
 
 add_command_help(
     "stats",
