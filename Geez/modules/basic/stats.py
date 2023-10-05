@@ -29,8 +29,11 @@ async def stats(client: Client, message: Message):
     c = 0
     b = 0
     a_chat = 0
-    tai = message.text.split(maxsplit=1)[1]  
     
+    # Dapatkan ID pengguna atau username dari pesan
+    user_info = message.text.split(maxsplit=1)[1]
+    
+    # List untuk menyimpan informasi grup dan supergrup
     group_info = []
 
     async for dialog in client.get_dialogs():
@@ -43,12 +46,17 @@ async def stats(client: Client, message: Message):
 
             if dialog.chat.type == enums.ChatType.SUPERGROUP:
                 sg += 1
-                user_s = await dialog.chat.get_member(int(tai))
-                if user_s.status in (
-                    enums.ChatMemberStatus.OWNER,
-                    enums.ChatMemberStatus.ADMINISTRATOR,
-                ):
-                    a_chat += 1
+                try:
+                    # Ganti dengan get_chat_member untuk mendapatkan info member
+                    user_s = await client.get_chat_member(dialog.chat.id, int(user_info))
+                    if user_s.status in (
+                        enums.ChatMemberStatus.OWNER,
+                        enums.ChatMemberStatus.ADMINISTRATOR,
+                    ):
+                        a_chat += 1
+                except Exception as e:
+                    print(e)  # Handle kesalahan jika diperlukan
+                    
         elif dialog.chat.type == enums.ChatType.CHANNEL:
             c += 1
 
@@ -57,7 +65,7 @@ async def stats(client: Client, message: Message):
     end = datetime.now()
     ms = (end - start)
 
-    vckyou = "\n".join([f"{id}: {title}" for id, title in group_info])
+    group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
 
     await Man.edit_text(
         f"""`Stats akun berhasil diambil dalam {ms} detik`
@@ -67,7 +75,7 @@ async def stats(client: Client, message: Message):
         `berada {c} Channels.`
         `menjadi admin di {a_chat} Chats.`
         `Bots = {b}`
-        \n`Info Grup:\n{vckyou}`"""
+        `Info Grup:\n{group_info_text}`"""
     )
 
 
