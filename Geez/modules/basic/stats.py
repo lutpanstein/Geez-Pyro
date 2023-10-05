@@ -69,7 +69,44 @@ async def stats(client: Client, message: Message):
         `berada {c} Channels.`
         `menjadi admin di {a_chat} Chats.`
         `Bots = {b}`
-        `Info Grup:\n{group_info_text}`"""
+        Info Grup:\n{group_info_text}"""
+    )
+
+
+@geez("ustats", cmds)
+async def user_stats(client: Client, message: Message):
+    username = message.text.split(" ", 1)[1].strip()
+    
+    try:
+        user = await client.get_users(username)
+    except Exception as e:
+        await message.reply_text(f"Terjadi kesalahan: {e}")
+        return
+
+    Man = await message.reply_text(f"`Mengambil info akun {username} ...`")
+    start = datetime.now()
+    u = 0
+    g = 0
+    sg = 0
+    c = 0
+    b = 0
+    a_chat = 0
+    Meh = user
+
+    end = datetime.now()
+    ms = (end - start)
+
+    group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
+
+    await Man.edit_text(
+        f"""`Status akun {username}, berhasil diambil dalam {ms} detik`
+        ` {u} Pesan Pribadi.`
+        `berada di {g} Groups.`
+        `berada {sg} Super Groups.`
+        `berada {c} Channels.`
+        `menjadi admin di {a_chat} Chats.`
+        `Bots = {b}`
+        Info Grup:\n{group_info_text}"""
     )
 
 
@@ -80,9 +117,3 @@ add_command_help(
     ]
 )
 
-add_command_help(
-    "stats",
-    [
-        [f"{cmds}stats", "Mengambil info akun anda."],
-    ],
-)
