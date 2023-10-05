@@ -41,8 +41,18 @@ async def stats(client: Client, message: Message):
     c = 0
     b = 0
     a_chat = 0
-    Meh = await client.get_me()
-
+    try:
+        target_user = int(target_user)
+        target_user_info = await client.get_chat(target_user)
+    except ValueError:
+        try:
+            target_user = await client.get_users(target_user)
+            target_user_info = target_user
+        except Exception as e:
+            await message.edit_text(f"`Gagal mendapatkan informasi akun target. Error: {e}`")
+            return
+        
+    
     # List to store information of groups and supergroups
     group_info = []
 
@@ -57,7 +67,7 @@ async def stats(client: Client, message: Message):
 
             if dialog.chat.type == enums.ChatType.SUPERGROUP:
                 sg += 1
-                user_s = await dialog.chat.get_member(int(Meh.id))
+                user_s = await dialog.chat.get_member(target_user_info.id)
                 if user_s.status in (
                     enums.ChatMemberStatus.OWNER,
                     enums.ChatMemberStatus.ADMINISTRATOR,
