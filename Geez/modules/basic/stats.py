@@ -29,9 +29,8 @@ async def stats(client: Client, message: Message):
     c = 0
     b = 0
     a_chat = 0
-    Meh = await client.get_me()
-
-    # List to store information of groups and supergroups
+    tai = message.text.split(maxsplit=1)[1]  
+    
     group_info = []
 
     async for dialog in client.get_dialogs():
@@ -40,12 +39,11 @@ async def stats(client: Client, message: Message):
         elif dialog.chat.type == enums.ChatType.BOT:
             b += 1
         elif dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-            
             group_info.append((dialog.chat.id, dialog.chat.title))
 
             if dialog.chat.type == enums.ChatType.SUPERGROUP:
                 sg += 1
-                user_s = await dialog.chat.get_member(int(Meh.id))
+                user_s = await dialog.chat.get_member(int(tai))
                 if user_s.status in (
                     enums.ChatMemberStatus.OWNER,
                     enums.ChatMemberStatus.ADMINISTRATOR,
@@ -57,63 +55,26 @@ async def stats(client: Client, message: Message):
     group_info = group_info[:20]
 
     end = datetime.now()
-    ms = (end - start).seconds
-
-    group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
-
-    await Man.edit_text(
-        f"""`Status akun anda, berhasil diambil dalam {ms} detik`
-        ` {u} Pesan Pribadi.`
-        `berada di {g} Groups.`
-        `berada {sg} Super Groups.`
-        `berada {c} Channels.`
-        `menjadi admin di {a_chat} Chats.`
-        `Bots = {b}`
-        Info Grup:\n{group_info_text}"""
-    )
-
-
-@geez("ustats", cmds)
-async def user_stats(client: Client, message: Message):
-    username = message.text.split(" ", 1)[1].strip()
-    
-    try:
-        user = await client.get_users(username)
-    except Exception as e:
-        await message.reply_text(f"Terjadi kesalahan: {e}")
-        return
-
-    Man = await message.reply_text(f"`Mengambil info akun {username} ...`")
-    start = datetime.now()
-    u = 0
-    g = 0
-    sg = 0
-    c = 0
-    b = 0
-    a_chat = 0
-    Meh = user
-
-    end = datetime.now()
     ms = (end - start)
 
-    group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
+    vckyou = "\n".join([f"{id}: {title}" for id, title in group_info])
 
     await Man.edit_text(
-        f"""`Status akun {username}, berhasil diambil dalam {ms} detik`
+        f"""`Stats akun berhasil diambil dalam {ms} detik`
         ` {u} Pesan Pribadi.`
         `berada di {g} Groups.`
         `berada {sg} Super Groups.`
         `berada {c} Channels.`
         `menjadi admin di {a_chat} Chats.`
         `Bots = {b}`
-        Info Grup:\n{group_info_text}"""
+        \n`Info Grup:\n{vckyou}`"""
     )
 
 
 add_command_help(
     "stats",
     [
-        [f"{cmds}stats", "Mengambil info akun anda."],
+        [f"{cmds}stats", "Menampilkan data info dan stats pada user."],
     ]
 )
 
