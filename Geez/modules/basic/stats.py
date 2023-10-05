@@ -21,7 +21,19 @@ from Geez import cmds
 
 @geez("stats", cmds)
 async def stats(client: Client, message: Message):
-    Man = await message.edit_text("`Mengambil info akun ...`")
+    target_user = message.text.split(" ")[1]  # Mendapatkan username atau user ID dari pesan
+
+    try:
+        target_user = int(target_user)
+    except ValueError:
+        try:
+            target_user = await client.get_users(target_user)
+            target_user = target_user.id
+        except Exception as e:
+            await message.edit_text(f"`Gagal mendapatkan informasi akun target. Error: {e}`")
+            return
+
+    Man = await message.edit_text(f"`Mengambil info akun {target_user} ...`")
     start = datetime.now()
     u = 0
     g = 0
@@ -29,11 +41,9 @@ async def stats(client: Client, message: Message):
     c = 0
     b = 0
     a_chat = 0
-    
-    # Dapatkan ID pengguna atau username dari pesan
-    user_info = message.text.split(maxsplit=1)[1]
-    
-    # List untuk menyimpan informasi grup dan supergrup
+    Meh = await client.get_me()
+
+    # List to store information of groups and supergroups
     group_info = []
 
     async for dialog in client.get_dialogs():
@@ -42,21 +52,17 @@ async def stats(client: Client, message: Message):
         elif dialog.chat.type == enums.ChatType.BOT:
             b += 1
         elif dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+            
             group_info.append((dialog.chat.id, dialog.chat.title))
 
             if dialog.chat.type == enums.ChatType.SUPERGROUP:
                 sg += 1
-                try:
-                    # Ganti dengan get_chat_member untuk mendapatkan info member
-                    user_s = await client.get_chat_member(dialog.chat.id, int(user_info))
-                    if user_s.status in (
-                        enums.ChatMemberStatus.OWNER,
-                        enums.ChatMemberStatus.ADMINISTRATOR,
-                    ):
-                        a_chat += 1
-                except Exception as e:
-                    print(e)  # Handle kesalahan jika diperlukan
-                    
+                user_s = await dialog.chat.get_member(int(Meh.id))
+                if user_s.status in (
+                    enums.ChatMemberStatus.OWNER,
+                    enums.ChatMemberStatus.ADMINISTRATOR,
+                ):
+                    a_chat += 1
         elif dialog.chat.type == enums.ChatType.CHANNEL:
             c += 1
 
@@ -68,7 +74,7 @@ async def stats(client: Client, message: Message):
     group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
 
     await Man.edit_text(
-        f"""`Stats akun berhasil diambil dalam {ms} detik`
+        f"""`Status akun {target_user}, berhasil diambil dalam {ms} detik`
         ` {u} Pesan Pribadi.`
         `berada di {g} Groups.`
         `berada {sg} Super Groups.`
@@ -82,7 +88,7 @@ async def stats(client: Client, message: Message):
 add_command_help(
     "stats",
     [
-        [f"{cmds}stats", "Menampilkan data info dan stats pada user."],
-    ]
+        [f"{cmds}stats", "Mengambil info akun anda."],
+        [f"{cmds}stats @username atau user_id", "Mengambil info akun pengguna lain."],
+    ],
 )
-
