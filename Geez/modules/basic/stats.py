@@ -12,8 +12,10 @@ kopas repo dan hapus credit, ga akan jadikan lu seorang developer
 YANG NYOLONG REPO INI TRUS DIJUAL JADI PREM, LU GAY...
 ©2023 Geez | Ram Team
 """
+
 from datetime import datetime
 from pyrogram import Client, enums
+from pyrogram.errors import ChatAdminRequired
 from pyrogram.types import Message
 from geezlibs.geez import geez
 from Geez.modules.basic import add_command_help
@@ -35,12 +37,13 @@ async def stats(client: Client, message: Message):
 
     Man = await message.edit_text(f"`Mengambil info akun {target_user} ...`")
     start = datetime.now()
-    u = 0
-    g = 0
-    sg = 0
-    c = 0
-    b = 0
-    a_chat = 0
+    u = 
+    g = 
+    sg = 
+    c = 
+    b = 
+    a_chat = 
+
     try:
         target_user = int(target_user)
         target_user_info = await client.get_chat(target_user)
@@ -51,9 +54,7 @@ async def stats(client: Client, message: Message):
         except Exception as e:
             await message.edit_text(f"`Gagal mendapatkan informasi akun target. Error: {e}`")
             return
-        
-    
-    # List to store information of groups and supergroups
+
     group_info = []
 
     async for dialog in client.get_dialogs():
@@ -62,25 +63,26 @@ async def stats(client: Client, message: Message):
         elif dialog.chat.type == enums.ChatType.BOT:
             b += 1
         elif dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-            
             group_info.append((dialog.chat.id, dialog.chat.title))
 
             if dialog.chat.type == enums.ChatType.SUPERGROUP:
                 sg += 1
-                user_s = await dialog.chat.get_member(target_user_info.id)
-                if user_s.status in (
-                    enums.ChatMemberStatus.OWNER,
-                    enums.ChatMemberStatus.ADMINISTRATOR,
-                ):
-                    a_chat += 1
+
+                try:
+                    # Memeriksa apakah pengguna adalah anggota dari supergrup
+                    await client.get_chat_member(dialog.chat.id, target_user_info.id)
+                    user_s = await dialog.chat.get_member(target_user_info.id)
+
+                    if user_s.status in (enums.ChatMemberStatus.OWNER, enums.ChatMemberStatus.ADMINISTRATOR):
+                        a_chat += 1
+                except ChatAdminRequired:
+                    pass
         elif dialog.chat.type == enums.ChatType.CHANNEL:
             c += 1
 
     group_info = group_info[:20]
-
     end = datetime.now()
     ms = (end - start)
-
     group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
 
     await Man.edit_text(
@@ -92,7 +94,7 @@ async def stats(client: Client, message: Message):
         `menjadi admin di {a_chat} Chats.`
         `Bots = {b}`
         `Info Grup:\n{group_info_text}`"""
-    )
+)
 
 
 add_command_help(
