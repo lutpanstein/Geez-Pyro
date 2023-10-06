@@ -31,7 +31,7 @@ async def who_is(client: Client, message: Message):
         return await ex.edit(
             "**Provide userid/username/reply to get that user's info.**"
         )
-    group_info = []
+
     try:
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
@@ -51,6 +51,7 @@ async def who_is(client: Client, message: Message):
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
         common = await client.get_common_chats(user.id)
 
+        group_info = []
         for chat in common[:20]:  # Only display the first 20 groups
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
                 group_info.append((chat.id, chat.title))
