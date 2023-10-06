@@ -57,8 +57,6 @@ async def who_is(client: Client, message: Message):
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
                 group_usernames_titles.append((chat.id, chat.title, chat.username))
 
-        group_usernames_titles = group_usernames_titles[:20]
-
         groups_check = "\n".join([f"{id}: {title} ({username})" for id, title, username in group_usernames_titles])
 
         out_str = f"""<b>USER INFORMATION:</b>
@@ -100,6 +98,22 @@ async def who_is(client: Client, message: Message):
             await ex.edit(out_str, disable_web_page_preview=True)
     except Exception as e:
         return await ex.edit(f"**INFO:** `{e}`")
+@geez(["scan"], cmds) # tambahkan ini untuk menentukan perintah baru
+async def get_public_groups(client: Client, message: Message):
+    try:
+        user_id = await extract_user(message)
+        common = await client.get_common_chats(user_id)
+
+        group_usernames_titles = []
+        for chat in common:
+            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+                group_usernames_titles.append((chat.id, chat.title, chat.username))
+
+        groups_check = "\n".join([f"<a href='https://t.me/{username}/{id}'>{title}</a> ({username})" for id, title, username in group_usernames_titles])
+
+        await message.reply_html(f"<b>Public Groups:</b>\n{groups_check}")
+    except Exception as e:
+        await message.reply_html(f"**INFO:** `{e}`")
 
 @geez(["chatinfo"], cmds)
 async def chatinfo_handler(client: Client, message: Message):
