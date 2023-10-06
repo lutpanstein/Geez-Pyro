@@ -61,28 +61,24 @@ async def stats(client: Client, message: Message):
 
     group_info = []
 
-    async for dialog in client.get_dialogs():
-        if dialog.chat.type == enums.ChatType.PRIVATE:
-            u += 1
-        elif dialog.chat.type == enums.ChatType.BOT:
-            b += 1
-        elif dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-            group_info.append((dialog.chat.id, dialog.chat.title))
+    try:
+        async for dialog in client.get_dialogs():  # Tambahkan 'async' sebelum for
+            if dialog.chat.type == enums.ChatType.PRIVATE:
+                u += 1
+            elif dialog.chat.type == enums.ChatType.BOT:
+                b += 1
+            elif dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+                group_info.append((dialog.chat.id, dialog.chat.title))
 
-            if dialog.chat.type == enums.ChatType.SUPERGROUP:
-                sg += 1
+                if dialog.chat.type == enums.ChatType.SUPERGROUP:
+                    sg += 1
 
-                try:
-                    # Memeriksa apakah pengguna adalah anggota dari supergrup
-                    await client.search_messages(dialog.chat.id, target_user_info.id)
-                    user_s = await dialog.chat.get_member(target_user_info.id)
-
-                    if user_s.status in (enums.ChatMemberStatus.OWNER, enums.ChatMemberStatus.ADMINISTRATOR):
-                        a_chat += 1
-                except ChatAdminRequired:
-                    pass
-        elif dialog.chat.type == enums.ChatType.CHANNEL:
-            c += 1
+                    try:
+                        # ...
+                    except ChatAdminRequired:
+                        pass
+            elif dialog.chat.type == enums.ChatType.CHANNEL:
+                c += 1
 
     group_info = group_info[:20]
     end = datetime.now()
