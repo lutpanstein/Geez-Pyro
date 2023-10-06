@@ -25,11 +25,11 @@ from Geez import cmds
 
 @geez(["info", "whois"], cmds)
 async def who_is(client: Client, message: Message):
-    user_id = await extract_user(message) 
+    user_id = await extract_user(message)
     ex = await message.edit_text("`Processing . . .`")
     if not user_id:
         return await ex.edit(
-            "**Provide userid/username**"
+            "**Provide userid/username/reply to get that user's info.**"
         )
     group_info = []
     try:
@@ -51,16 +51,15 @@ async def who_is(client: Client, message: Message):
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
         common = await client.get_common_chats(user.id)
 
-        for chat in common[:20]:
-            async for dialog in client.get_dialogs():
-                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-            
-                    group_info.append((dialog.chat.id, dialog.chat.title))
+        # Add this part to get the group usernames and titles
+        group_usernames_titles = []
+        for chat in common:
+            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+                group_usernames_titles.append((chat.id, chat.title, chat.username))
 
-        group_info = group_info[:20]
+        group_usernames_titles = group_usernames_titles[:20]
 
-        # Mengubah cara menampilkan info grup
-        groups_check = "\n".join([f"{id}: {title}" for id, title in group_info])
+        groups_check = "\n".join([f"{id}: {title} ({username})" for id, title, username in group_usernames_titles])
 
         out_str = f"""<b>USER INFORMATION:</b>
 
