@@ -31,6 +31,7 @@ async def who_is(client: Client, message: Message):
         return await ex.edit(
             "**Provide userid/username/reply to get that user's info.**"
         )
+        group_info = []
     try:
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
@@ -50,10 +51,11 @@ async def who_is(client: Client, message: Message):
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
         common = await client.get_common_chats(user.id)
 
-        groups_info = ""
+        group_info = group_info[:20]
         for chat in common[:20]:  # Hanya menampilkan 20 grup pertama
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
-                groups_info += f"👥 <b>{chat.title}</b> (ID: {chat.id})\n"
+                group_info.append((dialog.chat.id, dialog.chat.title))
+                groups_check = "\n".join([f"{id}: {title}" for id, title in group_info])
 
         out_str = f"""<b>USER INFORMATION:</b>
 
@@ -74,7 +76,7 @@ async def who_is(client: Client, message: Message):
 🔗 <b>User permanent link:</b> <a href='tg://user?id={user.id}'>{fullname}</a>
 
 <b>GROUPS:</b>
-{groups_info}
+{groups_check}
 """
 
         photo_id = user.photo.big_file_id if user.photo else None
