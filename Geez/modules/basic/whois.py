@@ -50,11 +50,10 @@ async def who_is(client: Client, message: Message):
             status = "-"
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
         common = await client.get_common_chats(user.id)
-        
+
         for chat in common[:20]:  # Hanya menampilkan 20 grup pertama
-            elif dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-            
-            group_info.append((dialog.chat.id, dialog.chat.title))
+            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+                group_info.append((dialog.chat.id, dialog.chat.title))
                 groups_check = "\n".join([f"{id}: {title}" for id, title in group_info])
 
         group_info = group_info[:20]
