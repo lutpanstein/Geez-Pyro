@@ -36,7 +36,7 @@ async def who_is(client: Client, message: Message):
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
         first_name = f"{user.first_name}" if user.first_name else "-"
-        last_name = f"{user.last_name}" if last_name else "-"
+        last_name = f"{user.last_name}" if user.last_name else "-"
         fullname = (
             f"{user.first_name} {user.last_name}" if user.last_name else user.first_name
         )
