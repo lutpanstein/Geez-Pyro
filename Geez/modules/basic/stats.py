@@ -61,8 +61,7 @@ async def stats(client: Client, message: Message):
 
     group_info = []
 
-    dialogs = await client.get_dialogs()
-    for dialog in dialogs:
+    async for dialog in client.get_dialogs():
         if dialog.chat.type == enums.ChatType.PRIVATE:
             u += 1
         elif dialog.chat.type == enums.ChatType.BOT:
@@ -99,7 +98,7 @@ async def stats(client: Client, message: Message):
         `menjadi admin di {a_chat} Chats.`
         `Bots = {b}`
         `Info Grup:\n{group_info_text}`"""
-        )
+    )
 
 add_command_help(
     "stats",
