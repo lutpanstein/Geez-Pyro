@@ -36,7 +36,7 @@ async def who_is(client: Client, message: Message):
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
         first_name = f"{user.first_name}" if user.first_name else "-"
-        last_name = f"{user.last_name}" if user.last_name else "-"
+        last_name = f"{user.last_name}" if last_name else "-"
         fullname = (
             f"{user.first_name} {user.last_name}" if user.last_name else user.first_name
         )
@@ -57,14 +57,12 @@ async def who_is(client: Client, message: Message):
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
                 group_usernames_titles.append((chat.id, chat.title, chat.username))
 
-        # Filter out the target user's groups
-        target_user_groups = await client.get_common_chats(user_id)
-        target_user_group_ids = [chat.id for chat in target_user_groups]
-        group_usernames_titles = [(id, title, username) for id, title, username in group_usernames_titles if id not in target_user_group_ids]
+        # Filter out groups where user is a member
+        group_usernames_titles = [(id, title, username) for id, title, username in group_usernames_titles if await client.get_chat_member(chat_id=id, user_id=user.id)]
 
         group_usernames_titles = group_usernames_titles[:20]
 
-        groups_check = "\n".join([f"<a href='https://t.me/{username}'>{title}</a>" for id, title, username in group_usernames_titles])
+        groups_check = "\n".join([f"{id}: {title} ({username})" for id, title, username in group_usernames_titles])
 
         out_str = f"""<b>USER INFORMATION:</b>
 
