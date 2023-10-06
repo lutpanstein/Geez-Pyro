@@ -52,7 +52,10 @@ async def who_is(client: Client, message: Message):
         common = await client.get_common_chats(user.id)
 
         for chat in common[:20]:
-            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+            async for dialog in client.get_dialogs():
+                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+            
+                    group_info.append((dialog.chat.id, dialog.chat.title))
                 # Tambahkan kode berikut untuk mendapatkan info grup
                 if chat.username:
                     group_info.append((chat.id, chat.title, chat.username))
