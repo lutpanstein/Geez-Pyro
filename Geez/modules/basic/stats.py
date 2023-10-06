@@ -75,10 +75,10 @@ async def stats(client: Client, message: Message):
 
                     try:
                         # ...
-                    except ChatAdminRequired:
-                        pass
-            elif dialog.chat.type == enums.ChatType.CHANNEL:
-                c += 1
+                        except ChatAdminRequired:
+                            pass
+                elif dialog.chat.type == enums.ChatType.CHANNEL:
+                    c += 1
 
     group_info = group_info[:20]
     end = datetime.now()
