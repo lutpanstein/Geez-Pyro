@@ -62,7 +62,8 @@ async def stats(client: Client, message: Message):
 
     group_info = []
 
-    async for dialog in client.get_dialogs():
+    dialogs = await client.get_dialogs()
+    for dialog in dialogs:
         if dialog.chat.type == enums.ChatType.PRIVATE:
             u += 1
         elif dialog.chat.type == enums.ChatType.BOT:
@@ -83,7 +84,9 @@ async def stats(client: Client, message: Message):
                 except ChatAdminRequired:
                     pass
         elif dialog.chat.type == enums.ChatType.CHANNEL:
+       
             c += 1
+
 
     group_info = group_info[:20]
     end = datetime.now()
