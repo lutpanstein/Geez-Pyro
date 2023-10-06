@@ -56,16 +56,11 @@ async def who_is(client: Client, message: Message):
                 if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
             
                     group_info.append((dialog.chat.id, dialog.chat.title))
-                # Tambahkan kode berikut untuk mendapatkan info grup
-                if chat.username:
-                    group_info.append((chat.id, chat.title, chat.username))
-                else:
-                    group_info.append((chat.id, chat.title))
 
         group_info = group_info[:20]
 
         # Mengubah cara menampilkan info grup
-        groups_check = "\n".join([f"{id}: {title} (@{username})" if username else f"{id}: {title}" for id, title, username in group_info])
+        groups_check = "\n".join([f"{id}: {title}" for id, title in group_info])
 
         out_str = f"""<b>USER INFORMATION:</b>
 
