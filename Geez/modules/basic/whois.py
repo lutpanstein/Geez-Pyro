@@ -49,11 +49,12 @@ async def who_is(client: Client, message: Message):
             status = "-"
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
         common = await client.get_common_chats(user.id)
-        common_groups_info = ""
-        if common:
-            common_groups_info = f"\n\n<b>Common Groups:</b>\n"
-            for index, chat in enumerate(common[:20], start=1):
-                common_groups_info += f"{index}. <b>{chat.title}</b> - <code>{chat.id}</code>\n"
+
+        groups_info = ""
+        for chat in common[:20]:  # Hanya menampilkan 20 grup pertama
+            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+                groups_info += f"👥 <b>{chat.title}</b> (ID: {chat.id})\n"
+
         out_str = f"""<b>USER INFORMATION:</b>
 
 🆔 <b>User ID:</b> <code>{user.id}</code>
@@ -71,8 +72,11 @@ async def who_is(client: Client, message: Message):
 👀 <b>Same groups seen:</b> {len(common)}
 👁️ <b>Last Seen:</b> <code>{status}</code>
 🔗 <b>User permanent link:</b> <a href='tg://user?id={user.id}'>{fullname}</a>
-{common_groups_info}
+
+<b>GROUPS:</b>
+{groups_info}
 """
+
         photo_id = user.photo.big_file_id if user.photo else None
         if photo_id:
             photo = await client.download_media(photo_id)
