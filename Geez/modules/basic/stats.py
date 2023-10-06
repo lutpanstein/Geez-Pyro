@@ -49,14 +49,13 @@ async def stats(client: Client, message: Message):
         target_user = int(target_user)
         target_user_info = await client.get_chat(target_user)
     except ValueError:
-        
         try:
             user = await client.get_users(target_user)
         except errors.exceptions.bad_request_400.UsernameNotOccupied:
-        # Tangani kasus ketika pengguna tidak ditemukan
+            # Tangani kasus ketika pengguna tidak ditemukan
             target_user_info = target_user
         except Exception as e:
-        # Tangani kasus kesalahan umum lainnya
+            # Tangani kasus kesalahan umum lainnya
             await message.edit_text(f"Gagal mendapatkan informasi akun target. Error: {e}")
             return
 
@@ -84,9 +83,7 @@ async def stats(client: Client, message: Message):
                 except ChatAdminRequired:
                     pass
         elif dialog.chat.type == enums.ChatType.CHANNEL:
-       
             c += 1
-
 
     group_info = group_info[:20]
     end = datetime.now()
@@ -102,8 +99,7 @@ async def stats(client: Client, message: Message):
         `menjadi admin di {a_chat} Chats.`
         `Bots = {b}`
         `Info Grup:\n{group_info_text}`"""
-)
-
+        )
 
 add_command_help(
     "stats",
