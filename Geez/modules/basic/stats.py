@@ -37,12 +37,12 @@ async def stats(client: Client, message: Message):
 
     Man = await message.edit_text(f"`Mengambil info akun {target_user} ...`")
     start = datetime.now()
-    u = 
-    g = 
-    sg = 
-    c = 
-    b = 
-    a_chat = 
+    u = 0
+    g = 0
+    sg = 0
+    c = 0
+    b = 0
+    a_chat = 0
 
     try:
         target_user = int(target_user)
