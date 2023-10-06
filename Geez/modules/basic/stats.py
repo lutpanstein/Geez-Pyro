@@ -71,7 +71,7 @@ async def stats(client: Client, message: Message):
 
                 try:
                     # Memeriksa apakah pengguna adalah anggota dari supergrup
-                    await client.get_chat_member(dialog.chat.id, target_user_info.id)
+                    await client.search_messages(dialog.chat.id, target_user_info.id)
                     user_s = await dialog.chat.get_member(target_user_info.id)
 
                     if user_s.status in (enums.ChatMemberStatus.OWNER, enums.ChatMemberStatus.ADMINISTRATOR):
