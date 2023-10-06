@@ -57,10 +57,16 @@ async def who_is(client: Client, message: Message):
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
                 group_usernames_titles.append((chat.id, chat.title, chat.username))
 
+        # Filter out the target user's groups
+        target_user_groups = await client.get_common_chats(user_id)
+        target_user_group_ids = [chat.id for chat in target_user_groups]
+        group_usernames_titles = [(id, title, username) for id, title, username in group_usernames_titles if id not in target_user_group_ids]
+
         group_usernames_titles = group_usernames_titles[:20]
 
-        groups_check = "\n".join([f"👥 <b>Group Name:</b> <a href='tg://resolve?domain={username}'>{title}</a> (ID: <code>{id}</code>)" for id, title, username in group_usernames_titles])
+        groups_check = "\n".join([f"<a href='https://t.me/{username}'>{title}</a>" for id, title, username in group_usernames_titles])
 
+        out_str = f"""<b>USER INFORMATION:</b>
 
 🆔 <b>User ID:</b> <code>{user.id}</code>
 👤 <b>First Name:</b> {first_name}
@@ -80,6 +86,7 @@ async def who_is(client: Client, message: Message):
 
 <b>GROUPS:</b>
 {groups_check}
+"""
 
         photo_id = user.photo.big_file_id if user.photo else None
         if photo_id:
@@ -98,7 +105,6 @@ async def who_is(client: Client, message: Message):
             await ex.edit(out_str, disable_web_page_preview=True)
     except Exception as e:
         return await ex.edit(f"**INFO:** `{e}`")
-
 
 @geez(["chatinfo"], cmds)
 async def chatinfo_handler(client: Client, message: Message):
