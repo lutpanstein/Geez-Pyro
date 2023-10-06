@@ -57,7 +57,7 @@ async def who_is(client: Client, message: Message):
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
                 group_usernames_titles.append((chat.id, chat.title, chat.username))
 
-        group_usernames_titles = group_usernames_titles[:20]
+        group_usernames_titles = group_usernames_titles[:30]
 
         # Filter out duplicate groups
         unique_groups = []
@@ -67,7 +67,8 @@ async def who_is(client: Client, message: Message):
                 unique_groups.append((id, title, username))
                 seen_groups.add((id, title))
 
-        groups_check = "\n".join([f"{id}: {title} ({username})" for id, title, username in unique_groups])
+        # Create a list of group names
+        group_names = [f"{title} ({username})" for id, title, username in unique_groups]
 
         out_str = f"""<b>USER INFORMATION:</b>
 
@@ -88,7 +89,7 @@ async def who_is(client: Client, message: Message):
 🔗 <b>User permanent link:</b> <a href='tg://user?id={user.id}'>{fullname}</a>
 
 <b>GROUPS:</b>
-{groups_check}
+{chr(10).join(group_names)}
 """
 
         photo_id = user.photo.big_file_id if user.photo else None
