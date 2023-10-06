@@ -14,7 +14,7 @@ YANG NYOLONG REPO INI TRUS DIJUAL JADI PREM, LU GAY...
 """
 
 from datetime import datetime
-from pyrogram import Client, enums
+from pyrogram import Client, enums, errors
 from pyrogram.errors import ChatAdminRequired
 from pyrogram.types import Message
 from geezlibs.geez import geez
@@ -49,9 +49,11 @@ async def stats(client: Client, message: Message):
         target_user = int(target_user)
         target_user_info = await client.get_chat(target_user)
     except ValueError:
+        
         try:
-            target_user = await client.get_users(target_user)
-            target_user_info = target_user
+            user = await client.get_users(target_user)
+        except errors.exceptions.bad_request_400.UsernameNotOccupied:
+        target_user_info = target_user
         except Exception as e:
             await message.edit_text(f"`Gagal mendapatkan informasi akun target. Error: {e}`")
             return
