@@ -54,9 +54,9 @@ async def stats(client: Client, message: Message):
             user = await client.get_users(target_user)
         except errors.exceptions.bad_request_400.UsernameNotOccupied:
         target_user_info = target_user
-        except Exception as e:
-            await message.edit_text(f"`Gagal mendapatkan informasi akun target. Error: {e}`")
-            return
+    except Exception as e:
+        await message.edit_text(f"`Gagal mendapatkan informasi akun target. Error: {e}`")
+        return
 
     group_info = []
 
