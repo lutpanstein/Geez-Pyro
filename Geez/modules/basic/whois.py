@@ -16,12 +16,14 @@ from asyncio import gather
 from os import remove
 from pyrogram import Client
 from pyrogram.enums import ChatType
-from pyrogram.types import Message
+from pyrogram.types import Message, Dialog
 from geezlibs.geez import geez
 from geezlibs.geez.helper.PyroHelpers import ReplyCheck
 from Geez.modules.basic.profile import extract_user
 from Geez.modules.basic import add_command_help
 from Geez import cmds
+
+
 
 @geez(["info", "whois"], cmds)
 async def who_is(client: Client, message: Message):
@@ -50,13 +52,13 @@ async def who_is(client: Client, message: Message):
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
 
         # Get all dialogs of the user
-        dialogs = await client.get_dialogs(offset_date=None, offset_id=0, offset_peer=InputPeerEmpty())
+        dialogs = await client.get_dialogs()
 
         # Filter out group dialogs
-        group_dialogs = [d for d in dialogs if d.peer.type in [PeerUser, PeerChat, PeerChannel]]
+        group_dialogs = [d for d in dialogs if isinstance(d.dialog, Dialog) and d.dialog.peer.type in ["supergroup", "group"]]
 
         # Extract group information
-        group_info = [(d.peer_id, d.title, d.username) for d in group_dialogs]
+        group_info = [(d.dialog.peer.id, d.dialog.title, d.dialog.username) for d in group_dialogs]
 
         # Filter out duplicate groups
         unique_groups = []
