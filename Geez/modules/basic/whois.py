@@ -80,7 +80,6 @@ async def who_is(client: Client, message: Message):
 
 <b>GROUPS:</b>
 {groups_check}
-"""
 
         photo_id = user.photo.big_file_id if user.photo else None
         if photo_id:
