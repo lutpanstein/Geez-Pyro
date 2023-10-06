@@ -57,86 +57,10 @@ async def who_is(client: Client, message: Message):
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
                 group_usernames_titles.append((chat.id, chat.title, chat.username))
 
-        groups_check = "\n".join([f"{id}: {title} ({username})" for id, title, username in group_usernames_titles])
-
-        out_str = f"""<b>USER INFORMATION:</b>
-
-🆔 <b>User ID:</b> <code>{user.id}</code>
-👤 <b>First Name:</b> {first_name}
-🗣️ <b>Last Name:</b> {last_name}
-🌐 <b>Username:</b> {username}
-🏛️ <b>DC ID:</b> <code>{dc_id}</code>
-🤖 <b>Is Bot:</b> <code>{user.is_bot}</code>
-🚷 <b>Is Scam:</b> <code>{user.is_scam}</code>
-🚫 <b>Restricted:</b> <code>{user.is_restricted}</code>
-✅ <b>Verified:</b> <code>{user.is_verified}</code>
-⭐ <b>Premium:</b> <code>{user.is_premium}</code>
-📝 <b>User Bio:</b> {bio}
-
-👀 <b>Same groups seen:</b> {len(common)}
-👁️ <b>Last Seen:</b> <code>{status}</code>
-🔗 <b>User permanent link:</b> <a href='tg://user?id={user.id}'>{fullname}</a>
-
-<b>GROUPS:</b>
-{groups_check}
-"""
-
-        photo_id = user.photo.big_file_id if user.photo else None
-        if photo_id:
-            photo = await client.download_media(photo_id)
-            await gather(
-                ex.delete(),
-                client.send_photo(
-                    message.chat.id,
-                    photo,
-                    caption=out_str,
-                    reply_to_message_id=ReplyCheck(message),
-                ),
-            )
-            remove(photo)
-        else:
-            await ex.edit(out_str, disable_web_page_preview=True)
-    except Exception as e:
-        return await ex.edit(f"**INFO:** `{e}`")
-@geez(["scan"], cmds)
-async def who_is(client: Client, message: Message):
-    user_id = await extract_user(message)
-    ex = await message.edit_text("`Processing . . .`")
-    if not user_id:
-        return await ex.edit(
-            "**Provide userid/username/reply to get that user's info.**"
-        )
-    group_info = []
-    try:
-        user = await client.get_users(user_id)
-        username = f"@{user.username}" if user.username else "-"
-        first_name = f"{user.first_name}" if user.first_name else "-"
-        last_name = f"{user.last_name}" if user.last_name else "-"
-        fullname = (
-            f"{user.first_name} {user.last_name}" if user.last_name else user.first_name
-        )
-        user_details = (await client.get_chat(user.id)).bio
-        bio = f"{user_details}" if user_details else "-"
-        h = f"{user.status}"
-        if h.startswith("UserStatus"):
-            y = h.replace("UserStatus.", "")
-            status = y.capitalize()
-        else:
-            status = "-"
-        dc_id = f"{user.dc_id}" if user.dc_id else "-"
-        common = await client.get_dialogs(limit=200)  # Increase the limit if necessary
-
-        # Filter out the groups
-        group_usernames_titles = []
-        for chat in common:
-            if chat.is_group:
-                group_usernames_titles.append((chat.id, chat.title, chat.username))
-
         group_usernames_titles = group_usernames_titles[:20]
 
-        groups_check = "\n".join([f"{id}: {title} ({username})" for id, title, username in group_usernames_titles])
+        groups_check = "\n".join([f"👥 <b>Group Name:</b> <a href='tg://resolve?domain={username}'>{title}</a> (ID: <code>{id}</code>)" for id, title, username in group_usernames_titles])
 
-        out_str = f"""<b>USER INFORMATION:</b>
 
 🆔 <b>User ID:</b> <code>{user.id}</code>
 👤 <b>First Name:</b> {first_name}
