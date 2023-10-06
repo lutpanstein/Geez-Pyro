@@ -19,11 +19,12 @@ from pyrogram.errors import ChatAdminRequired
 from pyrogram.types import Message
 from geezlibs.geez import geez
 from Geez.modules.basic import add_command_help
+from Geez.modules.basic.profile import extract_user
 from Geez import cmds
 
 @geez("stats", cmds)
 async def stats(client: Client, message: Message):
-    target_user = message.text.split(" ")[1]  # Mendapatkan username atau user ID dari pesan
+    target_user = await extract_user(message)  # Mendapatkan username atau user ID dari pesan
 
     try:
         target_user = int(target_user)
