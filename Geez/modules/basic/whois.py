@@ -57,12 +57,17 @@ async def who_is(client: Client, message: Message):
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
                 group_usernames_titles.append((chat.id, chat.title, chat.username))
 
-        # Filter out groups where user is a member
-        group_usernames_titles = [(id, title, username) for id, title, username in group_usernames_titles if await client.get_chat_member(chat_id=id, user_id=user.id)]
-
         group_usernames_titles = group_usernames_titles[:20]
 
-        groups_check = "\n".join([f"{id}: {title} ({username})" for id, title, username in group_usernames_titles])
+        # Filter out duplicate groups
+        unique_groups = []
+        seen_groups = set()
+        for id, title, username in group_usernames_titles:
+            if (id, title) not in seen_groups:
+                unique_groups.append((id, title, username))
+                seen_groups.add((id, title))
+
+        groups_check = "\n".join([f"{id}: {title} ({username})" for id, title, username in unique_groups])
 
         out_str = f"""<b>USER INFORMATION:</b>
 
