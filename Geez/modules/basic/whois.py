@@ -31,7 +31,6 @@ async def who_is(client: Client, message: Message):
         return await ex.edit(
             "**Provide userid/username/reply to get that user's info.**"
         )
-    group_info = []
     try:
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
@@ -49,26 +48,26 @@ async def who_is(client: Client, message: Message):
         else:
             status = "-"
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
-        common = await client.get_common_chats(user.id)
 
-        # Add this part to get the group usernames and titles
-        group_usernames_titles = []
-        for chat in common:
-            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
-                group_usernames_titles.append((chat.id, chat.title, chat.username))
+        # Get all dialogs of the user
+        dialogs = await client.get_dialogs(offset_date=None, offset_id=0, offset_peer=InputPeerEmpty())
 
-        group_usernames_titles = group_usernames_titles[:30]
+        # Filter out group dialogs
+        group_dialogs = [d for d in dialogs if d.peer.type in [PeerUser, PeerChat, PeerChannel]]
+
+        # Extract group information
+        group_info = [(d.peer_id, d.title, d.username) for d in group_dialogs]
 
         # Filter out duplicate groups
         unique_groups = []
         seen_groups = set()
-        for id, title, username in group_usernames_titles:
+        for id, title, username in group_info:
             if (id, title) not in seen_groups:
                 unique_groups.append((id, title, username))
                 seen_groups.add((id, title))
 
-        # Create a list of group names
-        group_names = [f"{title} ({username})" for id, title, username in unique_groups]
+        # Create a list of group names with numbered usernames
+        group_names = [f"{i+1}. {title} (@{username})" for i, (id, title, username) in enumerate(unique_groups[:30])]
 
         out_str = f"""<b>USER INFORMATION:</b>
 
@@ -84,7 +83,7 @@ async def who_is(client: Client, message: Message):
 ⭐ <b>Premium:</b> <code>{user.is_premium}</code>
 📝 <b>User Bio:</b> {bio}
 
-👀 <b>Same groups seen:</b> {len(common)}
+👀 <b>Same groups seen:</b> {len(group_info)}
 👁️ <b>Last Seen:</b> <code>{status}</code>
 🔗 <b>User permanent link:</b> <a href='tg://user?id={user.id}'>{fullname}</a>
 
@@ -109,6 +108,7 @@ async def who_is(client: Client, message: Message):
             await ex.edit(out_str, disable_web_page_preview=True)
     except Exception as e:
         return await ex.edit(f"**INFO:** `{e}`")
+
 
 @geez(["chatinfo"], cmds)
 async def chatinfo_handler(client: Client, message: Message):
