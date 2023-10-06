@@ -25,11 +25,11 @@ from Geez import cmds
 
 @geez(["info", "whois"], cmds)
 async def who_is(client: Client, message: Message):
-    user_id = await extract_user(message, reply=True) 
+    user_id = await extract_user(message) 
     ex = await message.edit_text("`Processing . . .`")
     if not user_id:
         return await ex.edit(
-            "**Provide userid/username/reply to get that user's info.**"
+            "**Provide userid/username**"
         )
     group_info = []
     try:
