@@ -31,7 +31,7 @@ async def who_is(client: Client, message: Message):
         return await ex.edit(
             "**Provide userid/username/reply to get that user's info.**"
         )
-        group_info = []
+    group_info = []
     try:
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
@@ -51,12 +51,12 @@ async def who_is(client: Client, message: Message):
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
         common = await client.get_common_chats(user.id)
 
-        for chat in common[:20]:  # Hanya menampilkan 20 grup pertama
+        for chat in common[:20]:  # Only display the first 20 groups
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
-                group_info.append((dialog.chat.id, dialog.chat.title))
-                groups_check = "\n".join([f"{id}: {title}" for id, title in group_info])
-
+                group_info.append((chat.id, chat.title))
         group_info = group_info[:20]
+
+        groups_check = "\n".join([f"{id}: {title}" for id, title in group_info])
 
         out_str = f"""<b>USER INFORMATION:</b>
 
@@ -97,7 +97,6 @@ async def who_is(client: Client, message: Message):
             await ex.edit(out_str, disable_web_page_preview=True)
     except Exception as e:
         return await ex.edit(f"**INFO:** `{e}`")
-
 
 @geez(["chatinfo"], cmds)
 async def chatinfo_handler(client: Client, message: Message):
