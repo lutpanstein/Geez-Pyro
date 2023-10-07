@@ -92,14 +92,17 @@ async def scan(client: Client, message: Message):
 
         group_info = group_info[:30]
 
-        group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
-
-        result = user if isinstance(user, list) and user else None
+        if group_info:
+            group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
+        else:
+            group_info_text = "No groups found."
 
         await ex.edit(
             f"""<b>Daftar Grup User {user.first_name}:</b>\n\n{group_info_text}""",
             parse_mode=enums.ParseMode.HTML,
         )
+
+        return users[0] if is_iterable and users else None
 
     except Exception as e:
         await ex.edit(f"**INFO:** `{e}`")
