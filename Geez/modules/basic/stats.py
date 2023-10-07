@@ -103,6 +103,8 @@ async def scan(client: Client, message: Message):
 
     try:
         user = await client.get_users(user_id)
+        if not user:
+            raise ValueError("User not found")
 
         async for dialog in client.get_dialogs():
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
@@ -125,8 +127,8 @@ async def scan(client: Client, message: Message):
 
         return user if user else None
 
-    except Exception as e:
-        await ex.edit(f"**INFO:** `{e}`")
+    except ValueError as ve:
+        await ex.edit(f"**INFO:** `{ve}`")
 
 
 
