@@ -93,7 +93,10 @@ async def scan(client: Client, message: Message):
     try:
         user = await client.get_users(user_id)
 
-        async for dialog in client.get_dialogs():
+        dialogs = await client.get_dialogs()
+        tasks = []
+
+        for dialog in dialogs:
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
                 # Memeriksa apakah user_id adalah anggota dari grup
                 members = await client.get_chat_members(dialog.chat.id, user_id)
