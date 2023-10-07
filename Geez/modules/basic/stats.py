@@ -83,7 +83,6 @@ async def stats(client: Client, message: Message):
     )
 
 @geez(["scan"], cmds)
-
 async def scan(client: Client, message: Message):
     ex = await message.edit_text("`Mengambil info akun target ...`")
     user_id = await extract_user(message)
@@ -92,20 +91,20 @@ async def scan(client: Client, message: Message):
     group_info = []
 
     try:
-        # Prompt the user to enter the target user ID
-        target_user_id = input("Enter the target user ID: ")
+        user = await client.get_users(user_id)
 
-        user = await client.get_users(target_user_id)
         async for dialog in client.get_dialogs():
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                group_info.append((dialog.chat.id, dialog.chat.title))
+                members = await client.get_chat_members(dialog.chat.id, user_id)
+                if any(member.user.id == user.id for member in members):
+                    group_info.append((dialog.chat.id, dialog.chat.title))
 
         group_info = group_info[:30]
 
         if group_info:
             group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
         else:
-            group_info_text = "No groups found."
+            group_info_text = "User tidak ditemukan di grup manapun."
 
         await ex.edit(
             f"""<b>Daftar Grup User {user.first_name}:</b>\n\n{group_info_text}""",
