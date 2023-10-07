@@ -90,28 +90,28 @@ async def scan(client: Client, message: Message):
     # List to store information of groups and supergroups
     group_info = []
 
-    async def get_bots_in_group(client, chat_id):
-        try:
-            chat = await client.get_chat(chat_id)
-            members = await client.get_chat_members(chat_id)
-            bots = [user for user in members if user.user.is_bot]
-            bot_usernames = [user.user.username for user in bots]
-            return bot_usernames
-        except Exception as e:
-            print(f"Error: {e}")
-            return []
-
     try:
         user = await client.get_users(user_id)
-        if not user:
-            raise ValueError("User not found")
 
         async for dialog in client.get_dialogs():
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                bot_usernames = await get_bots_in_group(client, dialog.chat.id)
+                # Memeriksa apakah user_id adalah anggota dari grup
+                members = await client.get_chat_members(dialog.chat.id, user_id)
+                if any(member.user.id == user_id for member in members):
+                    # Memeriksa apakah bot @missrose_bot adalah anggota grup
+                    missrose_members = await client.get_chat_members(dialog.chat.id, "@missrose_bot")
+                    missrose_bot_present = any(member.user.username == "missrose_bot" for member in missrose_members)
 
-                if 'ghsecuritybot' in bot_usernames and 'missrose_bot' in bot_usernames:
-                    group_info.append((dialog.chat.id, dialog.chat.title))
+                    # Memeriksa apakah bot @quotlyBot adalah anggota grup
+                    quotly_members = await client.get_chat_members(dialog.chat.id, "@quotlyBot")
+                    quotly_bot_present = any(member.user.username == "quotlyBot" for member in quotly_members)
+
+                    # Memeriksa apakah bot @grouphelpbot adalah anggota grup
+                    grouphelp_members = await client.get_chat_members(dialog.chat.id, "@grouphelpbot")
+                    grouphelp_bot_present = any(member.user.username == "grouphelpbot" for member in grouphelp_members)
+
+                    if missrose_bot_present and quotly_bot_present and grouphelp_bot_present:
+                        group_info.append((dialog.chat.id, dialog.chat.title))
 
         group_info = group_info[:30]
 
@@ -127,8 +127,8 @@ async def scan(client: Client, message: Message):
 
         return user if user else None
 
-    except ValueError as ve:
-        await ex.edit(f"**INFO:** `{ve}`")
+    except Exception as e:
+        await ex.edit(f"**INFO:** `{e}`")
 
 
 
