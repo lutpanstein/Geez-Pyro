@@ -22,6 +22,13 @@ from Geez.modules.basic import add_command_help
 from Geez.modules.basic.profile import extract_user
 from Geez import cmds
 
+def is_iterable(obj):
+    try:
+        iter(obj)
+        return True
+    except TypeError:
+        return False
+
 @geez("stats", cmds)
 async def stats(client: Client, message: Message):
     Man = await message.edit_text("`Mengambil info akun ...`")
