@@ -94,7 +94,7 @@ async def scan(client: Client, message: Message):
 
         group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
 
-        result = users if isinstance(users, list) and users else None
+        result = user if isinstance(user, list) and user else None
 
         await ex.edit(
             f"""<b>Daftar Grup User {user.first_name}:</b>\n\n{group_info_text}""",
