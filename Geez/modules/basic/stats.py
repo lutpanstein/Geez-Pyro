@@ -85,36 +85,38 @@ async def stats(client: Client, message: Message):
 @geez(["scan"], cmds)
 async def scan(client: Client, message: Message):
     ex = await message.edit_text("`Mengambil info akun target ...`")
+    user_id = await extract_user(message)
+
+    # List to store information of groups and supergroups
+    group_info = []
 
     try:
-        # Mengambil input username/id dari pesan
-        input_username = message.command[1] if len(message.command) > 1 else None
-
-        # Jika tidak ada input username/id, informasikan pengguna dan keluar dari fungsi
-        if not input_username:
-            await ex.edit("Gunakan perintah seperti: /scan <username/id>")
-            return
-
-        user = await client.get_users(input_username)
-
-        # List untuk menyimpan informasi grup dan supergroup
-        group_info = []
+        user = await client.get_users(user_id)
 
         async for dialog in client.get_dialogs():
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                group_info.append((dialog.chat.id, dialog.chat.title))
+                chat = dialog.chat
+
+                # Periksa apakah bot @ghsecuritybot dan @missrose_bot ada di grup
+                ghsecuritybot = await client.get_chat_member(chat.id, 'ghsecuritybot')
+                missrose_bot = await client.get_chat_member(chat.id, 'missrose_bot')
+
+                if ghsecuritybot.status == 'member' and missrose_bot.status == 'member':
+                    group_info.append((chat.id, chat.title))
 
         group_info = group_info[:30]
 
         if group_info:
             group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
         else:
-            group_info_text = "Tidak ada grup ditemukan."
+            group_info_text = "No groups found."
 
         await ex.edit(
             f"""<b>Daftar Grup User {user.first_name}:</b>\n\n{group_info_text}""",
             parse_mode=enums.ParseMode.HTML,
         )
+
+        return user if user else None
 
     except Exception as e:
         await ex.edit(f"**INFO:** `{e}`")
