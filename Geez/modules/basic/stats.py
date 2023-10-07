@@ -85,40 +85,46 @@ async def stats(client: Client, message: Message):
 @geez(["scan"], cmds)
 async def scan(client: Client, message: Message):
     ex = await message.edit_text("`Mengambil info akun target ...`")
-    user_id = await extract_user(message)
-
-    # List to store information of groups
-    group_info = []
 
     try:
-        user = await client.get_users(user_id)
+        # Mengambil input username/id dari pesan
+        input_username = message.command[1] if len(message.command) > 1 else None
 
-        # Bot usernames to check
-        bot_usernames = ["missrose_bot", "quotlyBot", "grouphelpbot"]
+        # Jika tidak ada input username/id, informasikan pengguna dan keluar dari fungsi
+        if not input_username:
+            await ex.edit("Gunakan perintah seperti: /scan <username/id>")
+            return
 
-        async for dialog in client.get_dialogs():
-            if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                # Memeriksa apakah user_id adalah anggota dari grup
-                members = await client.get_chat_members(dialog.chat.id, user_id)
-                if any(member.user.id == user_id for member in members):
-                    # Memeriksa apakah grup tersebut memiliki bot yang diinginkan
-                    chat = await client.get_chat(dialog.chat.id)
-                    if any(bot_username in chat.username for bot_username in bot_usernames):
-                        group_info.append((dialog.chat.id, dialog.chat.title))
+        user = await client.get_users(input_username)
+
+        # List untuk menyimpan informasi grup dan supergroup
+        group_info = []
+
+        # Daftar bot yang akan digunakan untuk mengumpulkan informasi grup
+        bot_usernames = ["@missrose_bot", "@quotlyBot", "@grouphelpbot"]
+
+        for bot_username in bot_usernames:
+            bot = await client.get_users(bot_username)
+            async for dialog in client.get_dialogs():
+                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+                    try:
+                        member = await client.get_chat_member(dialog.chat.id, bot.id)
+                        if member.status == enums.ChatMemberStatus.MEMBER:
+                            group_info.append((dialog.chat.id, dialog.chat.title))
+                    except Exception:
+                        pass
 
         group_info = group_info[:30]
 
         if group_info:
             group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
         else:
-            group_info_text = "Tidak ada grup yang ditemukan."
+            group_info_text = "Tidak ada grup ditemukan."
 
         await ex.edit(
-            f"""<b>Daftar Grup User {user.first_name}:</b>\n\n{group_info_text}""",
+            f"<b>Daftar Grup User {user.first_name}:</b>\n\n{group_info_text}",
             parse_mode=enums.ParseMode.HTML,
         )
-
-        return user if user else None
 
     except Exception as e:
         await ex.edit(f"**INFO:** `{e}`")
