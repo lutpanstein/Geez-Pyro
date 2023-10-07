@@ -85,33 +85,36 @@ async def stats(client: Client, message: Message):
 @geez(["scan"], cmds)
 async def scan(client: Client, message: Message):
     ex = await message.edit_text("`Mengambil info akun target ...`")
-    user_id = await extract_user(message)
-
-    # List to store information of groups and supergroups
-    group_info = []
 
     try:
-        user = await client.get_users(user_id)
+        # Mengambil input username/id dari pesan
+        input_username = message.command[1] if len(message.command) > 1 else None
+
+        # Jika tidak ada input username/id, informasikan pengguna dan keluar dari fungsi
+        if not input_username:
+            await ex.edit("Gunakan perintah seperti: /scan <username/id>")
+            return
+
+        user = await client.get_users(input_username)
+
+        # List untuk menyimpan informasi grup dan supergroup
+        group_info = []
 
         async for dialog in client.get_dialogs():
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                members = await client.get_chat_members(dialog.chat.id, user_id)
-                if any(member.user.id == user.id for member in members):
-                    group_info.append((dialog.chat.id, dialog.chat.title))
+                group_info.append((dialog.chat.id, dialog.chat.title))
 
         group_info = group_info[:30]
 
         if group_info:
             group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
         else:
-            group_info_text = "User tidak ditemukan di grup manapun."
+            group_info_text = "Tidak ada grup ditemukan."
 
         await ex.edit(
             f"""<b>Daftar Grup User {user.first_name}:</b>\n\n{group_info_text}""",
             parse_mode=enums.ParseMode.HTML,
         )
-
-        return user if user else None
 
     except Exception as e:
         await ex.edit(f"**INFO:** `{e}`")
