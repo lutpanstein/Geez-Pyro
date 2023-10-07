@@ -19,6 +19,7 @@ from pyrogram.errors import ChatAdminRequired
 from pyrogram.types import Message
 from geezlibs.geez import geez
 from Geez.modules.basic import add_command_help
+from Geez.modules.basic.profile import extract_user
 from Geez import cmds
 
 @geez("stats", cmds)
