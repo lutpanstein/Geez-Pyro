@@ -87,33 +87,23 @@ async def scan(client: Client, message: Message):
     ex = await message.edit_text("`Mengambil info akun target ...`")
     user_id = await extract_user(message)
 
-    # List to store information of groups and supergroups
+    # List to store information of groups
     group_info = []
 
     try:
         user = await client.get_users(user_id)
 
-        dialogs = await client.get_dialogs()
-        tasks = []
+        # Bot usernames to check
+        bot_usernames = ["missrose_bot", "quotlyBot", "grouphelpbot"]
 
-        for dialog in dialogs:
+        async for dialog in client.get_dialogs():
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
                 # Memeriksa apakah user_id adalah anggota dari grup
                 members = await client.get_chat_members(dialog.chat.id, user_id)
                 if any(member.user.id == user_id for member in members):
-                    # Memeriksa apakah bot @missrose_bot adalah anggota grup
-                    missrose_members = await client.get_chat_members(dialog.chat.id, "@missrose_bot")
-                    missrose_bot_present = any(member.user.username == "missrose_bot" for member in missrose_members)
-
-                    # Memeriksa apakah bot @quotlyBot adalah anggota grup
-                    quotly_members = await client.get_chat_members(dialog.chat.id, "@quotlyBot")
-                    quotly_bot_present = any(member.user.username == "quotlyBot" for member in quotly_members)
-
-                    # Memeriksa apakah bot @grouphelpbot adalah anggota grup
-                    grouphelp_members = await client.get_chat_members(dialog.chat.id, "@grouphelpbot")
-                    grouphelp_bot_present = any(member.user.username == "grouphelpbot" for member in grouphelp_members)
-
-                    if missrose_bot_present and quotly_bot_present and grouphelp_bot_present:
+                    # Memeriksa apakah grup tersebut memiliki bot yang diinginkan
+                    chat = await client.get_chat(dialog.chat.id)
+                    if any(bot_username in chat.username for bot_username in bot_usernames):
                         group_info.append((dialog.chat.id, dialog.chat.title))
 
         group_info = group_info[:30]
@@ -121,7 +111,7 @@ async def scan(client: Client, message: Message):
         if group_info:
             group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
         else:
-            group_info_text = "No groups found."
+            group_info_text = "Tidak ada grup yang ditemukan."
 
         await ex.edit(
             f"""<b>Daftar Grup User {user.first_name}:</b>\n\n{group_info_text}""",
