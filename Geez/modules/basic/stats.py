@@ -106,10 +106,9 @@ async def scan(client: Client, message: Message):
 
         async for dialog in client.get_dialogs():
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                ghsecuritybot_in_group = await get_bots_in_group(client, dialog.chat.id)
-                missrose_bot_in_group = await get_bots_in_group(client, dialog.chat.id)
+                bot_usernames = await get_bots_in_group(client, dialog.chat.id)
 
-                if 'ghsecuritybot' in ghsecuritybot_in_group and 'missrose_bot' in missrose_bot_in_group:
+                if 'ghsecuritybot' in bot_usernames and 'missrose_bot' in bot_usernames:
                     group_info.append((dialog.chat.id, dialog.chat.title))
 
         group_info = group_info[:30]
@@ -128,6 +127,7 @@ async def scan(client: Client, message: Message):
 
     except Exception as e:
         await ex.edit(f"**INFO:** `{e}`")
+
 
 
 add_command_help(
