@@ -109,7 +109,7 @@ async def scan(client: Client, message: Message):
             parse_mode=enums.ParseMode.HTML,
         )
 
-        return users[0] if is_iterable and users else None
+        return user if user else None
 
     except Exception as e:
         await ex.edit(f"**INFO:** `{e}`")
