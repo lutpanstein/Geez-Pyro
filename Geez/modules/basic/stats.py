@@ -90,19 +90,27 @@ async def scan(client: Client, message: Message):
     # List to store information of groups and supergroups
     group_info = []
 
+    async def get_bots_in_group(client, chat_id):
+        try:
+            chat = await client.get_chat(chat_id)
+            members = await client.get_chat_members(chat_id)
+            bots = [user for user in members if user.user.is_bot]
+            bot_usernames = [user.user.username for user in bots]
+            return bot_usernames
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
+
     try:
         user = await client.get_users(user_id)
 
         async for dialog in client.get_dialogs():
             if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                chat = dialog.chat
+                ghsecuritybot_in_group = await get_bots_in_group(client, dialog.chat.id)
+                missrose_bot_in_group = await get_bots_in_group(client, dialog.chat.id)
 
-                # Periksa apakah bot @ghsecuritybot dan @missrose_bot ada di grup
-                ghsecuritybot = await client.get_chat_member(chat.id, 'ghsecuritybot')
-                missrose_bot = await client.get_chat_member(chat.id, 'missrose_bot')
-
-                if ghsecuritybot.status == 'member' and missrose_bot.status == 'member':
-                    group_info.append((chat.id, chat.title))
+                if 'ghsecuritybot' in ghsecuritybot_in_group and 'missrose_bot' in missrose_bot_in_group:
+                    group_info.append((dialog.chat.id, dialog.chat.title))
 
         group_info = group_info[:30]
 
