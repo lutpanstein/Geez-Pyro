@@ -100,19 +100,10 @@ async def scan(client: Client, message: Message):
         # List untuk menyimpan informasi grup dan supergroup
         group_info = []
 
-        # Daftar bot yang akan digunakan untuk mengumpulkan informasi grup
-        bot_usernames = ["@missrose_bot", "@quotlyBot", "@grouphelpbot"]
-
-        for bot_username in bot_usernames:
-            bot = await client.get_users(bot_username)
-            async for dialog in client.get_dialogs():
-                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                    try:
-                        member = await client.get_chat_member(dialog.chat.id, bot.id)
-                        if member.status == enums.ChatMemberStatus.MEMBER:
-                            group_info.append((dialog.chat.id, dialog.chat.title))
-                    except Exception:
-                        pass
+        async for dialog in client.get_dialogs():
+            if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+                if dialog.chat.username in ["missrose_bot", "quotlyBot", "grouphelpbot"]:
+                    group_info.append((dialog.chat.id, dialog.chat.title))
 
         group_info = group_info[:30]
 
