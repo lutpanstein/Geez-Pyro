@@ -179,7 +179,6 @@ async def who_is(client: Client, message: Message):
         return await ex.edit(
             "**Provide userid/username/reply to get that user's info.**"
         )
-    group_info = []
     try:
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
