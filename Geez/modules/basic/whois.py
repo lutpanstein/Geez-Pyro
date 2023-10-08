@@ -171,7 +171,7 @@ async def chatinfo_handler(client: Client, message: Message):
         return await ex.edit(f"**INFO:** `{e}`")
 
 
-@geez(["info", "whois"], cmds)
+@geez(["dg"], cmds)
 async def who_is(client: Client, message: Message):
     user_id = await extract_user(message)
     ex = await message.edit_text("`Processing . . .`")
