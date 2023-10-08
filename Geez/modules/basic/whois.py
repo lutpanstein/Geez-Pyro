@@ -171,7 +171,7 @@ async def chatinfo_handler(client: Client, message: Message):
         return await ex.edit(f"**INFO:** `{e}`")
 
 
-@geez(["dg"], cmds)
+@geez(["info", "whois"], cmds)
 async def who_is(client: Client, message: Message):
     user_id = await extract_user(message)
     ex = await message.edit_text("`Processing . . .`")
@@ -179,6 +179,7 @@ async def who_is(client: Client, message: Message):
         return await ex.edit(
             "**Provide userid/username/reply to get that user's info.**"
         )
+    group_info = []
     try:
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
@@ -202,13 +203,20 @@ async def who_is(client: Client, message: Message):
         bot_ids = [300860929, 5422359176, 1031952739, 208056682, 609517172]
 
         # Filter common chats to include only groups containing bot IDs
-        groups_with_bots = [chat for chat in common if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP] and any(await client.get_chat_member(chat.id, user.id)) for user in bot_ids)]
+        groups_with_bots = [
+            chat
+            for chat in common
+            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]
+            and any(member.user.id in bot_ids for member in await client.get_chat_members(chat.id, limit=200))
+        ]
 
         # Filter out duplicate groups
         unique_groups = []
         seen_groups = set()
         for chat in groups_with_bots:
-            unique_groups.append((chat.id, chat.title, chat.username))
+            if (chat.id, chat.title) not in seen_groups:
+                unique_groups.append((chat.id, chat.title, chat.username))
+                seen_groups.add((chat.id, chat.title))
 
         # Create a list of group names
         group_names = [f"{title} ({username})" for id, title, username in unique_groups]
@@ -239,6 +247,7 @@ async def who_is(client: Client, message: Message):
             await ex.edit(out_str, disable_web_page_preview=True)
     except Exception as e:
         return await ex.edit(f"**INFO:** `{e}`")
+
 
 add_command_help(
     "info",
