@@ -95,6 +95,7 @@ async def scan(client: Client, message: Message):
             await ex.edit("Gunakan perintah seperti: /scan <username/id>")
             return
 
+        # Mendapatkan informasi tentang akun target
         user = await client.get_users(input_username)
 
         # List untuk menyimpan informasi grup dan supergroup
@@ -103,16 +104,24 @@ async def scan(client: Client, message: Message):
         # Daftar bot yang akan digunakan untuk mengumpulkan informasi grup
         bot_usernames = ["@missrose_bot", "@quotlyBot", "@grouphelpbot"]
 
+        # Mendapatkan ID pengguna target
+        user_id = user.id
+
         for bot_username in bot_usernames:
-            try:
-                bot = await client.get_users(bot_username)
-                async for dialog in client.get_dialogs():
-                    if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                        member = await client.get_chat_member(dialog.chat.id, user.id)
-                        if member.status == enums.ChatMemberStatus.MEMBER:
-                            group_info.append((dialog.chat.id, dialog.chat.title))
-            except Exception:
-                pass
+            bot = await client.get_users(bot_username)
+            async for dialog in client.get_dialogs():
+                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+
+                group_info.append((dialog.chat.id, dialog.chat.title))
+                    try:
+                        # Mendapatkan status pengguna target di grup
+                        member = await dialog.chat.get_member(int(Meh.id))
+                        if user_s.status in (
+                            enums.ChatMemberStatus.OWNER,
+                            enums.ChatMemberStatus.ADMINISTRATOR,
+                        ):
+                        except Exception:
+                            pass
 
         group_info = group_info[:30]
 
