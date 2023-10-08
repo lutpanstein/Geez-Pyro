@@ -171,6 +171,74 @@ async def chatinfo_handler(client: Client, message: Message):
         return await ex.edit(f"**INFO:** `{e}`")
 
 
+@geez(["dg"], cmds)
+async def who_is(client: Client, message: Message):
+    user_id = await extract_user(message)
+    ex = await message.edit_text("`Processing . . .`")
+    if not user_id:
+        return await ex.edit(
+            "**Provide userid/username/reply to get that user's info.**"
+        )
+    group_info = []
+    try:
+        user = await client.get_users(user_id)
+        username = f"@{user.username}" if user.username else "-"
+        first_name = f"{user.first_name}" if user.first_name else "-"
+        last_name = f"{user.last_name}" if user.last_name else "-"
+        fullname = (
+            f"{user.first_name} {user.last_name}" if user.last_name else user.first_name
+        )
+        user_details = (await client.get_chat(user.id)).bio
+        bio = f"{user_details}" if user_details else "-"
+        h = f"{user.status}"
+        if h.startswith("UserStatus"):
+            y = h.replace("UserStatus.", "")
+            status = y.capitalize()
+        else:
+            status = "-"
+        dc_id = f"{user.dc_id}" if user.dc_id else "-"
+        common = await client.get_common_chats(user.id)
+
+        # Add this part to get the group usernames and titles
+        group_usernames_titles = []
+        for chat in common:
+            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+                group_usernames_titles.append((chat.id, chat.title, chat.username))
+
+        # Filter out duplicate groups
+        unique_groups = []
+        seen_groups = set()
+        for id, title, username in group_usernames_titles:
+            if (id, title) not in seen_groups:
+                unique_groups.append((id, title, username))
+                seen_groups.add((id, title))
+
+        # Create a list of group names
+        group_names = [f"{title} ({username})" for id, title, username in unique_groups]
+
+        # Iterate through bot IDs and check if they are in the same group
+        bot_ids = ["300860929", "5422359176", "1031952739", "208056682", "609517172"]
+        for bot_id in bot_ids:
+            for chat_id, chat_title, chat_username in unique_groups:
+                try:
+                    chat_members = await client.get_chat_members(chat_id, int(bot_id))
+                    if chat_members:
+                        group_info.append((chat_title, chat_username))
+                except Exception as e:
+                    pass
+
+        # Create a list of unique group names where the user and bot are together
+        unique_group_info = list(set(group_info))
+
+        out_str = f"""<b>USER INFORMATION:</b>
+        ...
+        </b>User permanent link:</b> <a href='tg://user?id={user.id}'>{fullname}</a>
+
+        <b>GROUPS WHERE USER AND BOT ARE TOGETHER:</b>
+        {chr(10).join([f"{title} ({username})" for title, username in unique_group_info])}
+        """
+
+
 add_command_help(
     "info",
     [
