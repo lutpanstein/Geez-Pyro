@@ -108,7 +108,7 @@ async def scan(client: Client, message: Message):
             async for dialog in client.get_dialogs():
                 if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
                     try:
-                        member = await client.get_chat_member(dialog.chat.id, bot.id)
+                        member = await client.get_chat_member(dialog.chat.id, user.id)
                         if member.status == enums.ChatMemberStatus.MEMBER:
                             group_info.append((dialog.chat.id, dialog.chat.title))
                     except Exception:
