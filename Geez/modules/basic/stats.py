@@ -104,15 +104,15 @@ async def scan(client: Client, message: Message):
         bot_usernames = ["@missrose_bot", "@quotlyBot", "@grouphelpbot"]
 
         for bot_username in bot_usernames:
-            bot = await client.get_users(bot_username)
-            async for dialog in client.get_dialogs():
-                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                    try:
+            try:
+                bot = await client.get_users(bot_username)
+                async for dialog in client.get_dialogs():
+                    if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
                         member = await client.get_chat_member(dialog.chat.id, user.id)
                         if member.status == enums.ChatMemberStatus.MEMBER:
                             group_info.append((dialog.chat.id, dialog.chat.title))
-                    except Exception:
-                        pass
+            except Exception:
+                pass
 
         group_info = group_info[:30]
 
