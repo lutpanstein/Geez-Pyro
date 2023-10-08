@@ -239,6 +239,10 @@ async def who_is(client: Client, message: Message):
         """
 
 
+    except Exception as e:
+        return await ex.edit(f"**INFO:** `{e}`")
+
+
 add_command_help(
     "info",
     [
