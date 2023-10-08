@@ -203,14 +203,13 @@ async def who_is(client: Client, message: Message):
         bot_ids = [300860929, 5422359176, 1031952739, 208056682, 609517172]
 
         # Filter common chats to include only groups containing bot IDs
-        groups_with_bots = [chat for chat in common if any(bot_id in chat.members for bot_id in bot_ids)]
+        groups_with_bots = [chat for chat in common if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP] and any(bot_id in [user.id for user in await client.get_chat_members_count(chat.id)] for bot_id in bot_ids)]
 
         # Filter out duplicate groups
         unique_groups = []
         seen_groups = set()
         for chat in groups_with_bots:
-            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
-                unique_groups.append((chat.id, chat.title, chat.username))
+            unique_groups.append((chat.id, chat.title, chat.username))
 
         # Create a list of group names
         group_names = [f"{title} ({username})" for id, title, username in unique_groups]
@@ -241,7 +240,6 @@ async def who_is(client: Client, message: Message):
             await ex.edit(out_str, disable_web_page_preview=True)
     except Exception as e:
         return await ex.edit(f"**INFO:** `{e}`")
-
 
 add_command_help(
     "info",
