@@ -202,12 +202,13 @@ async def who_is(client: Client, message: Message):
         bot_ids = [300860929, 5422359176, 1031952739, 208056682, 609517172]
 
         # Filter common chats to include only groups containing bot IDs
-        groups_with_bots = [
-            chat
-            for chat in common
-            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]
-            and any(member.user.id in bot_ids for member in await client.get_chat_members(chat.id, limit=200))
-        ]
+        groups_with_bots = []
+
+        async for chat in common:
+            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+                chat_members = await client.get_chat_members(chat.id, limit=200)
+                if any(member.user.id in bot_ids for member in chat_members):
+                    groups_with_bots.append(chat)
 
         # Filter out duplicate groups
         unique_groups = []
