@@ -109,19 +109,19 @@ async def scan(client: Client, message: Message):
 
         for bot_username in bot_usernames:
             bot = await client.get_users(bot_username)
-            async for dialog in client.get_dialogs():
-                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+        async for dialog in client.get_dialogs():
+            if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
 
-                group_info.append((dialog.chat.id, dialog.chat.title))
-                    try:
+            group_info.append((dialog.chat.id, dialog.chat.title))
+                try:
                         # Mendapatkan status pengguna target di grup
-                        member = await dialog.chat.get_member(int(Meh.id))
-                        if user_s.status in (
-                            enums.ChatMemberStatus.OWNER,
-                            enums.ChatMemberStatus.ADMINISTRATOR,
-                        ):
-                        except Exception:
-                            pass
+                    member = await dialog.chat.get_member(int(user.id))
+                    if user_s.status in (
+                        enums.ChatMemberStatus.OWNER,
+                        enums.ChatMemberStatus.ADMINISTRATOR,
+                    ):
+                    except Exception:
+                        pass
 
         group_info = group_info[:30]
 
