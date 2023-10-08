@@ -109,17 +109,17 @@ async def scan(client: Client, message: Message):
 
         for bot_username in bot_usernames:
             bot = await client.get_users(bot_username)
-        async for dialog in client.get_dialogs():
-            if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-
-            group_info.append((dialog.chat.id, dialog.chat.title))
-                try:
+            async for dialog in client.get_dialogs():
+                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+                    group_info.append((dialog.chat.id, dialog.chat.title))
+                    try:
                         # Mendapatkan status pengguna target di grup
-                    member = await dialog.chat.get_member(int(user.id))
-                    if user_s.status in (
-                        enums.ChatMemberStatus.OWNER,
-                        enums.ChatMemberStatus.ADMINISTRATOR,
-                    ):
+                        member = await dialog.chat.get_member(int(user.id))
+                        if user_s.status in (
+                            enums.ChatMemberStatus.OWNER,
+                            enums.ChatMemberStatus.ADMINISTRATOR,
+                        ):
+                            pass
                     except Exception:
                         pass
 
@@ -137,7 +137,6 @@ async def scan(client: Client, message: Message):
 
     except Exception as e:
         await ex.edit(f"**INFO:** `{e}`")
-
 
 add_command_help(
     "stats",
