@@ -24,7 +24,6 @@ from Geez.modules.basic import add_command_help
 from Geez import cmds
 
 
-
 @geez(["info", "whois"], cmds)
 async def who_is(client: Client, message: Message):
     user_id = await extract_user(message)
@@ -33,7 +32,6 @@ async def who_is(client: Client, message: Message):
         return await ex.edit(
             "**Provide userid/username/reply to get that user's info.**"
         )
-    group_info = []
     try:
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
@@ -52,24 +50,6 @@ async def who_is(client: Client, message: Message):
             status = "-"
         dc_id = f"{user.dc_id}" if user.dc_id else "-"
         common = await client.get_common_chats(user.id)
-
-        # Add this part to get the group usernames and titles
-        group_usernames_titles = []
-        for chat in common:
-            if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
-                group_usernames_titles.append((chat.id, chat.title, chat.username))
-
-        # Filter out duplicate groups
-        unique_groups = []
-        seen_groups = set()
-        for id, title, username in group_usernames_titles:
-            if (id, title) not in seen_groups:
-                unique_groups.append((id, title, username))
-                seen_groups.add((id, title))
-
-        # Create a list of group names
-        group_names = [f"{title} ({username})" for id, title, username in unique_groups]
-
         out_str = f"""<b>USER INFORMATION:</b>
 
 🆔 <b>User ID:</b> <code>{user.id}</code>
@@ -87,11 +67,7 @@ async def who_is(client: Client, message: Message):
 👀 <b>Same groups seen:</b> {len(common)}
 👁️ <b>Last Seen:</b> <code>{status}</code>
 🔗 <b>User permanent link:</b> <a href='tg://user?id={user.id}'>{fullname}</a>
-
-<b>GROUPS:</b>
-{chr(10).join(group_names)}
 """
-
         photo_id = user.photo.big_file_id if user.photo else None
         if photo_id:
             photo = await client.download_media(photo_id)
@@ -109,7 +85,6 @@ async def who_is(client: Client, message: Message):
             await ex.edit(out_str, disable_web_page_preview=True)
     except Exception as e:
         return await ex.edit(f"**INFO:** `{e}`")
-
 
 @geez(["chatinfo"], cmds)
 async def chatinfo_handler(client: Client, message: Message):
