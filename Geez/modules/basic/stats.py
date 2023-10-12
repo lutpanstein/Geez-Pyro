@@ -82,8 +82,8 @@ async def stats(client: Client, message: Message):
         `Info Grup:\n{group_info_text}`"""
     )
 
-@geez(["scan"], cmds)
-async def scan(client: Client, message: Message):
+@geez(["detect"], cmds)
+async def detect(client: Client, message: Message):
     ex = await message.edit_text("`Mengambil info akun target ...`")
 
     try:
@@ -92,7 +92,7 @@ async def scan(client: Client, message: Message):
 
         # Jika tidak ada input username/id, informasikan pengguna dan keluar dari fungsi
         if not input_username:
-            await ex.edit("Gunakan perintah seperti: /scan <username/id>")
+            await ex.edit("Gunakan perintah seperti: /detect <username/id>")
             return
 
         # Mendapatkan informasi tentang akun target
@@ -101,29 +101,18 @@ async def scan(client: Client, message: Message):
         # List untuk menyimpan informasi grup dan supergroup
         group_info = []
 
-        # Daftar bot yang akan digunakan untuk mengumpulkan informasi grup
-        bot_usernames = ["@missrose_bot", "@quotlyBot", "@grouphelpbot"]
-
-        # Mendapatkan ID pengguna target
-        user_id = user.id
-
-        for bot_username in bot_usernames:
-            bot = await client.get_users(bot_username)
-            async for dialog in client.get_dialogs():
-                if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-                    group_info.append((dialog.chat.id, dialog.chat.title))
-                    try:
-                        # Mendapatkan status pengguna target di grup
-                        member = await dialog.chat.get_member(int(user.id))
-                        if user_s.status in (
-                            enums.ChatMemberStatus.OWNER,
-                            enums.ChatMemberStatus.ADMINISTRATOR,
-                        ):
-                            pass
-                    except Exception:
-                        pass
-
-        group_info = group_info[:30]
+        async for dialog in client.get_dialogs():
+            if dialog.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+                try:
+                    # Mendapatkan status pengguna target di grup
+                    member = await dialog.chat.get_member(int(user.id))
+                    if member.status in (
+                        enums.ChatMemberStatus.OWNER,
+                        enums.ChatMemberStatus.ADMINISTRATOR,
+                    ):
+                        group_info.append((dialog.chat.id, dialog.chat.title))
+                except Exception:
+                    pass
 
         if group_info:
             group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
