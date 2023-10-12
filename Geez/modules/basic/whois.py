@@ -36,6 +36,7 @@ async def who_is(client: Client, message: Message):
     try:
         user = await client.get_users(user_id)
         username = f"@{user.username}" if user.username else "-"
+        usernames = f"@{user.username}" if user.username else "-"
         first_name = f"{user.first_name}" if user.first_name else "-"
         last_name = f"{user.last_name}" if user.last_name else "-"
         fullname = (
@@ -56,18 +57,18 @@ async def who_is(client: Client, message: Message):
         group_usernames_titles = []
         for chat in common:
             if chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
-                group_usernames_titles.append((chat.id, chat.title, chat.username))
+                group_usernames_titles.append((chat.id, chat.title, chat.usernames))
 
         # Filter out duplicate groups
         unique_groups = []
         seen_groups = set()
-        for id, title, username in group_usernames_titles:
+        for id, title, usernames in group_usernames_titles:
             if (id, title) not in seen_groups:
-                unique_groups.append((id, title, username))
+                unique_groups.append((id, title, usernames))
                 seen_groups.add((id, title))
 
         # Create a list of group names
-        group_names = [f"{title} ({username})" for id, title, username in unique_groups]
+        group_names = [f"{title} ({usernames})" for id, title, usernames in unique_groups]
 
         out_str = f"""<b>USER INFORMATION:</b>
 
