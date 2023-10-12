@@ -84,11 +84,11 @@ async def who_is(client: Client, message: Message):
 ⭐ <b>Premium:</b> <code>{user.is_premium}</code>
 📝 <b>User Bio:</b> {bio}
 
-👀 <b>Same groups seen:</b> {len(common)}
 👁️ <b>Last Seen:</b> <code>{status}</code>
 🔗 <b>User permanent link:</b> <a href='tg://user?id={user.id}'>{fullname}</a>
 
-<b>GROUPS:</b>
+👀 <b>Same groups seen:</b> {len(common)}
+👥 <b>list of same groups:</b>
 {chr(10).join(group_names)}
 """
 
