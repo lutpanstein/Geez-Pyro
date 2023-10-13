@@ -115,7 +115,7 @@ async def detect(client: Client, message: Message):
                     pass
 
         if group_info:
-            group_info_text = "\n".join([f"{id}: {title}" for id, title in group_info])
+            group_info_text = "\n".join([f"{title}: {id}" for id, title in group_info])
         else:
             group_info_text = "Tidak ada grup ditemukan."
 
