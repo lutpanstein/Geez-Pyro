@@ -159,7 +159,7 @@ async def fake_quote_cmd(client: Client, message: Message):
             return await message.edit("username tidak ditemukan")
     else:
         try:
-            user = await client.get_entity(int(target_user))
+            user = await client.get_users(int(target_user))
         except ValueError:
             return await message.edit("Format ID tidak valid")
 
