@@ -148,22 +148,23 @@ async def fake_quote_cmd(client: Client, message: Message):
     send_for_me = "!me" in message.command or "!ls" in message.command
 
     if len(message.command) < 3:
-        return await message.edit(f"format yang diberikan salah,\ngunakan {cmds}fq <username> <pesan>")
+        return await message.edit(f"format yang diberikan salah,\ngunakan {cmds}fq <username/id> <pesan>")
 
     target_user = message.command[1]
-    if not target_user.startswith("@"):
-        return await message.edit("format username salah")
-    target_user = target_user[1:]
 
-    try:
-        user = await client.get_users(target_user)
-    except errors.exceptions.bad_request_400.UsernameNotOccupied:
-        return await message.edit("username tidak ditemukan")
-    except IndexError:
-        return await message.edit("jangan gunakan username CH/GROUP")
+    if target_user.startswith("@"):
+        try:
+            user = await client.get_users(target_user[1:])
+        except errors.exceptions.bad_request_400.UsernameNotOccupied:
+            return await message.edit("username tidak ditemukan")
+    else:
+        try:
+            user = await client.get_entity(int(target_user))
+        except ValueError:
+            return await message.edit("Format ID tidak valid")
 
     if user.id in DEVS:
-        return await message.edit("Devs terlalu kuat untuk di jadikan target")
+        return await message.edit("Devs terlalu kuat untuk dijadikan target")
 
     fake_quote_text = " ".join(message.command[2:])
 
