@@ -5,12 +5,7 @@ from pyrogram.types import Message
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from base64 import b64encode, b64decode
-from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    InputTextMessageContent,
-    InlineQueryResultArticle,
-)
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputTextMessageContent, InlineQueryResultArticle
 from Geez import app
 
 
@@ -28,7 +23,7 @@ key = get_random_bytes(16)
 
 
 @app.on_inline_query()
-def inline_query(client, query: InlineQuery):
+def inline_query(client, query):
     try:
         # Cek apakah inline query memiliki cukup argumen
         if len(query.query.split()) < 3:
@@ -45,17 +40,32 @@ def inline_query(client, query: InlineQuery):
         encrypted_message = encrypt_message(message_text.encode('utf-8'), key)
 
         # Kirim hasil inline query dengan tombol untuk dekripsi pesan
+        reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Buka Pesan Rahasia", callback_data=f"decrypt:{b64encode(encrypted_message).decode('utf-8')}")]])
+        
         return [
             InlineQueryResultArticle(
                 id='1',
                 title='Klik untuk mengirim pesan rahasia',
                 input_message_content=InputTextMessageContent(
-                    message_text=f"🔒 [Pesan Rahasia] 🔒\n\n{b64encode(encrypted_message).decode('utf-8')}"
+                    message_text=f"🔒 [Pesan Rahasia] 🔒\n\n{b64encode(encrypted_message).decode('utf-8')}",
+                    reply_markup=reply_markup
                 ),
-                reply_markup=InlineKeyboardMarkup(
-                    [[InlineKeyboardButton(text='Buka Pesan Rahasia', callback_data=b64encode(encrypted_message).decode('utf-8'))]]
-                )
             )
         ]
     except Exception as e:
         print(f"Error: {str(e)}")
+
+@app.on_callback_query()
+async def button(bot, update):
+    try:
+        # Memisahkan callback data
+        action, encrypted_message = update.data.split(":")
+
+        if action == "decrypt":
+            # Dekripsi pesan ketika tombol ditekan
+            decrypted_message = decrypt_message(encrypted_message.encode('utf-8'), key)
+
+            # Kirim pesan terdekripsi ke pengguna
+            await update.message.reply_text(f"🔓 [Pesan Terbuka] 🔓\n\n{decrypted_message}")
+    except Exception as e:
+        await update.message.reply_text(f"Error: {str(e)}")
