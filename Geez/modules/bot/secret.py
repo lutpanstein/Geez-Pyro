@@ -31,7 +31,7 @@ def inline_query(client, query):
 
         # Split inline query untuk mendapatkan teks pesan dan username/id target
         _, message_text, target_id = query.query.split(" ", 2)
-        
+
         # Cek apakah username/id target valid
         if not target_id.startswith("@") and not target_id.isdigit():
             return []
@@ -39,9 +39,12 @@ def inline_query(client, query):
         # Enkripsi pesan
         encrypted_message = encrypt_message(message_text.encode('utf-8'), key)
 
-        # Kirim hasil inline query dengan tombol untuk dekripsi pesan
+        # Siapkan pesan yang akan ditampilkan setelah mencari @usernamebot
+        search_message = f"ℹ️ Searching for {target_id}..."
+
+        # Kirim hasil inline query dengan pesan pencarian dan tombol untuk dekripsi pesan
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("Buka Pesan Rahasia", callback_data=f"decrypt:{b64encode(encrypted_message).decode('utf-8')}")]])
-        
+
         return [
             InlineQueryResultArticle(
                 id='1',
@@ -50,10 +53,18 @@ def inline_query(client, query):
                     message_text=f"🔒 [Pesan Rahasia] 🔒\n\n{b64encode(encrypted_message).decode('utf-8')}",
                     reply_markup=reply_markup
                 ),
+            ),
+            InlineQueryResultArticle(
+                id='2',
+                title='Search @babugeezrobot',
+                input_message_content=InputTextMessageContent(
+                    message_text=search_message
+                ),
             )
         ]
     except Exception as e:
         print(f"Error: {str(e)}")
+
 
 @app.on_callback_query()
 async def button(bot, update):
