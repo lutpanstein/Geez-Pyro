@@ -11,7 +11,7 @@ from pyrogram.types import (
 )
 from Geez import app
 
-# Fungsi untuk mengenkripsi pesan
+
 def encrypt_message(message, key):
     cipher = AES.new(key, AES.MODE_ECB)
     return b64encode(cipher.encrypt(message))
@@ -24,25 +24,31 @@ def decrypt_message(encrypted_message, key):
 # Inisialisasi kunci acak, pastikan kunci ini disimpan dengan aman
 key = get_random_bytes(16)
 
-# Fungsi yang akan dijalankan ketika bot menerima pesan
-@app.on_message(filters.command("usernamebot", prefixes="@"))
-def send_secret_message(client, message: Message):
+
+# Fungsi yang akan dijalankan ketika bot menerima pesan pribadi
+@app.on_message(filters.private)
+def handle_private_message(client, message: Message):
     try:
-        # Split pesan untuk mendapatkan teks pesan dan username target
-        _, message_text, target_username = message.text.split(" ", 2)
+        # Cek apakah ada argumen untuk pesan
+        if len(message.command) < 2:
+            message.reply_text("Cara menggunakan: <pesan> <username/id_pengguna_target>")
+            return
+
+        # Split pesan untuk mendapatkan teks pesan dan username/id target
+        message_text, target_id = message.text.split(" ", 1)
         
-        # Cek apakah username target valid
-        if not target_username.startswith("@"):
-            raise Exception("Invalid target username")
+        # Cek apakah username/id target valid
+        if not target_id.startswith("@") and not target_id.isdigit():
+            raise Exception("Invalid target username or user ID")
 
         # Enkripsi pesan
         encrypted_message = encrypt_message(message_text.encode('utf-8'), key)
 
         # Kirim pesan terenkripsi ke pengguna target
-        client.send_message(target_username, f"🔒 [Pesan Rahasia] 🔒\n\n{b64encode(encrypted_message).decode('utf-8')}")
+        client.send_message(target_id, f"🔒 [Pesan Rahasia] 🔒\n\n{b64encode(encrypted_message).decode('utf-8')}")
 
         # Kirim tombol untuk dekripsi pesan
-        message.reply_text(f"🔒 Pesan Rahasia terkirim ke {target_username}! 🔒", reply_markup={
+        message.reply_text(f"🔒 Pesan Rahasia terkirim ke {target_id}! 🔒", reply_markup={
             "inline_keyboard": [
                 [{"text": "Buka Pesan Rahasia", "callback_data": b64encode(encrypted_message).decode('utf-8')}]
             ]
