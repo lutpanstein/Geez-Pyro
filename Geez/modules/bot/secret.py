@@ -33,7 +33,7 @@ encrypted_messages = {}
 def handle_private_message(client, message: Message):
     try:
         # Cek apakah pesan dimulai dengan @usernamebot dan memiliki 3 argumen
-        if not message.text.startswith("@usernamebot") or len(message.command) < 3:
+        if not message.text.startswith("@BabuGeezRobot") or len(message.command) < 3:
             return
 
         # Split pesan untuk mendapatkan teks pesan dan username/id target
