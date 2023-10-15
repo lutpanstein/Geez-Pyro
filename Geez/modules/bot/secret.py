@@ -26,20 +26,16 @@ def find_user(query):
         return None
 
 # Fungsi untuk menangani inline query
-@app.on_inline_query()
-async def inline_query_handler(client, inline_query):
-    input_content = inline_query.query.lower().strip()
-    user = find_user(input_content)
-
-    if user:
-        # Jika pengguna ditemukan, kirim pesan dengan tombol inline
-        message = encrypt_message("Ini adalah pesan rahasia.", user.username)
-        button = InlineKeyboardButton("Buka Pesan", callback_data=f"show_message_{user.id}_{message}")
-        reply_markup = InlineKeyboardMarkup([[button]])
-        result = InlineQueryResultArticle(
-            id=user.id,
-            title=user.username,
-            input_message_content=InputTextMessageContent(message_text="Pesan rahasia", reply_markup=reply_markup)
+@app.on_chosen_inline_result()
+async def chosen_inline_result_handler(client, chosen_inline_result):
+    if chosen_inline_result.query.startswith("open_whisper"):
+        _, user_id, _ = chosen_inline_result.query.split("_")
+        user = await app.get_users(int(user_id))
+        # Mengirim pesan rahasia hanya ke pengguna yang dituju
+        await app.send_message(
+            chosen_inline_result.from_user.id,
+            "Ini adalah pesan rahasia.",
+            reply_markup=InlineKeyboardMarkup([])
         )
         await inline_query.answer([result], cache_time=0)
     else:
@@ -51,5 +47,17 @@ async def callback_query_handler(client, callback_query):
     if callback_query.data.startswith("show_message"):
         _, user_id, message = callback_query.data.split("_")
         user = await app.get_users(int(user_id))
+
+    # Meminta input tambahan untuk membuka pesan
+        message_button = InlineKeyboardButton(
+            "Buka Pesan",
+            switch_inline_query=f"open_whisper_{user.id}_"
+        )
+
+        reply_markup = InlineKeyboardMarkup([[message_button]])
+
         decrypted_message = decrypt_message(message, user.username)
-        await callback_query.answer(decrypted_message)
+        await callback_query.answer(
+            decrypted_message,
+            reply_markup=reply_markup
+        )
