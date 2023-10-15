@@ -8,7 +8,7 @@ whispers_data = {}
 
 
 @app.on_inline_query()
-async def answer(_, query: InlineQuery):
+async def answer(_, query):
     sender = query.from_user.id
     query_list = query.query.split(" ")
     if query.query == "":
