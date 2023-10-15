@@ -1,4 +1,4 @@
-from pyrogram import Client, InputTextMessageContent, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram import Client, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.types import InlineQueryResultArticle
 from pyrogram.errors import UsernameInvalid, UsernameNotOccupied, PeerIdInvalid
 
