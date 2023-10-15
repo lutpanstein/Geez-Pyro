@@ -1,5 +1,6 @@
 from pyrogram import Client, InlineQuery, InputTextMessageContent, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.types import InlineQueryResultArticle
+from pyrogram.errors import UsernameInvalid, UsernameNotOccupied, PeerIdInvalid
 
 from Geez import app
 
