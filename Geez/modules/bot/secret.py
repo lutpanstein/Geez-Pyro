@@ -33,17 +33,13 @@ async def answer(_, query):
                 name = target_user.first_name + target_user.last_name
             else:
                 name = target_user.first_name
-            text1 = f"A whisper message to {name}"
-            text2 = "Only he/she can open it."
+            text1 = f"A whisper message to {name}\n\nOnly he/she can open it."
             whispers_data[sender] = {"specific": None, "message": text1, "receiver_id": receiver}
             await query.answer(
                 results=[
                     InlineQueryResultArticle(
                         title=text1,
-                        input_message_content=InputTextMessageContent(
-                            f"A whisper message to {target_user.mention}" + " " + text2),
-                        url="https://t.me/StarkBots",
-                        description=text2,
+                        description="🔐 Show Message 🔐",
                         thumb_url="https://telegra.ph/file/33af12f457b16532e1383.jpg",
                         reply_markup=InlineKeyboardMarkup(
                             [
@@ -61,7 +57,7 @@ async def answer(_, query):
                 switch_pm_parameter="start"
             )
             await check_for_users(receiver)
-        except (UsernameInvalid, UsernameNotOccupied, PeerIdInvalid,  IndexError):
+        except (UsernameInvalid, UsernameNotOccupied, PeerIdInvalid, IndexError):
             results = await previous_target(sender)
             await query.answer(results, switch_pm_text="🔒 Learn How to send Whispers", switch_pm_parameter="start")
 
