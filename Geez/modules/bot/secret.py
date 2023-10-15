@@ -1,5 +1,5 @@
 from pyrogram import Client, filters, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
+from pyrogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, ChosenInlineResult
 import hashlib
 from Geez import app
 
