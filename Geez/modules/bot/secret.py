@@ -1,63 +1,62 @@
-from pyrogram import Client, filters, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle, ChosenInlineResult
-import hashlib
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InlineQuery, InlineQueryResultArticle, InputTextMessageContent
+
 from Geez import app
 
+# Fungsi untuk menangani perintah /start
+@app.on_message(filters.command(["start"]))
+def start_command(client, message):
+    # Mengirim pesan awal
+    client.send_message(
+        chat_id=message.chat.id,
+        text="Halo! Silakan gunakan perintah /secret untuk membuat pesan rahasia."
+    )
 
-# Fungsi untuk mengenkripsi pesan
-def encrypt_message(message, username):
-    key = f"{app.get_me().id}:{username}"
-    encrypted_message = hashlib.sha256(key.encode() + message.encode()).hexdigest()
-    return encrypted_message
+# Fungsi untuk menangani perintah /secret
+@app.on_message(filters.command(["secret"]))
+def secret_command(client, message):
+    # Memeriksa apakah pesan memiliki argumen yang valid
+    if len(message.command) < 3:
+        client.send_message(
+            chat_id=message.chat.id,
+            text="Format perintah salah. Gunakan /secret <pesan tujuan> <username/id>."
+        )
+        return
 
-# Fungsi untuk mendekripsi pesan
-def decrypt_message(encrypted_message, username):
-    key = f"{app.get_me().id}:{username}"
-    decrypted_message = hashlib.sha256(key.encode() + encrypted_message.encode()).hexdigest()
-    return decrypted_message
+    # Mendapatkan pesan tujuan dan username/id pengguna
+    target_message = message.command[1]
+    target_user = message.command[2]
 
-# Fungsi untuk mencari pengguna berdasarkan username/id
-def find_user(query):
-    try:
-        user = app.get_users(query)
-        return user
-    except Exception as e:
-        print(e)
-        return None
+    # Membuat inline keyboard dengan tombol untuk membuka pesan rahasia
+    inline_keyboard = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("Buka Pesan Rahasia", switch_inline_query=f"{target_message} {target_user}")]]
+    )
+
+    # Mengirim pesan dengan inline keyboard
+    client.send_message(
+        chat_id=message.chat.id,
+        text="Pesan rahasia telah dibuat!",
+        reply_markup=inline_keyboard
+    )
 
 # Fungsi untuk menangani inline query
-@app.on_chosen_inline_result()
-async def chosen_inline_result_handler(client, chosen_inline_result):
-    if chosen_inline_result.query.startswith("open_whisper"):
-        _, user_id, _ = chosen_inline_result.query.split("_")
-        user = await app.get_users(int(user_id))
-        # Mengirim pesan rahasia hanya ke pengguna yang dituju
-        await app.send_message(
-            chosen_inline_result.from_user.id,
-            "Ini adalah pesan rahasia.",
-            reply_markup=InlineKeyboardMarkup([])
-        )
-        await inline_query.answer([result], cache_time=0)
-    else:
-        await inline_query.answer([], cache_time=0)
+@app.on_inline_query()
+def inline_query(client, query: InlineQuery):
+    try:
+        # Mendapatkan pesan tujuan dan username/id pengguna dari inline query
+        target_message, target_user = query.query.split()
 
-# Fungsi untuk menanggapi tombol inline
-@app.on_callback_query()
-async def callback_query_handler(client, callback_query):
-    if callback_query.data.startswith("show_message"):
-        _, user_id, message = callback_query.data.split("_")
-        user = await app.get_users(int(user_id))
+        # Membuat pesan inline result
+        result = [
+            InlineQueryResultArticle(
+                id="1",
+                title="Pesan Rahasia",
+                input_message_content=InputTextMessageContent(f"Ini adalah pesan rahasia untuk @{target_user}: {target_message}")
+            )
+        ]
 
-    # Meminta input tambahan untuk membuka pesan
-        message_button = InlineKeyboardButton(
-            "Buka Pesan",
-            switch_inline_query=f"open_whisper_{user.id}_"
-        )
+        # Mengirim hasil inline query
+        client.answer_inline_query(query.id, results=result)
 
-        reply_markup = InlineKeyboardMarkup([[message_button]])
-
-        decrypted_message = decrypt_message(message, user.username)
-        await callback_query.answer(
-            decrypted_message,
-            reply_markup=reply_markup
-        )
+    except ValueError:
+        pass
