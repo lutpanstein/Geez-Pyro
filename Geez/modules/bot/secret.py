@@ -46,7 +46,10 @@ def chosen_inline_result(_, result):
         else:
             app.send_message(result.from_user.id, "Anda tidak memiliki izin untuk melihat pesan ini.")
 
-@app.on_message(filters.mention & filters.private)
+@app.on_message(filters.private & ~filters.me & filters.text)
 def mention(_, message):
     user = message.from_user
-    message.reply_text(f"Halo, {user.first_name}!\n\nUntuk mengirim pesan rahasia, ketik /whisper.")
+    if f"@{app.get_me().username}" in message.text:
+        message.reply_text(f"Halo, {user.first_name}!\n\nUntuk mengirim pesan rahasia, ketik /whisper.")
+
+
