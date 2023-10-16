@@ -2,26 +2,21 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputTextMessageContent
 from Geez import app
 
-# Dictionary untuk menyimpan username/id target
 whisper_targets = {}
 
-# Fungsi untuk menangani perintah /start
 @app.on_message(filters.command("start"))
 def start(_, message):
     message.reply_text("Halo! Saya bot rahasia. Kirimkan pesan rahasia dengan mengetik /whisper.")
 
-# Fungsi untuk menangani perintah /whisper
 @app.on_message(filters.command("whisper"))
 def whisper(_, message):
     if message.chat.type == "private":
         message.reply_text("Kirimkan pesan rahasia ini kepada pengguna lain:")
-        whisper_targets[message.chat.id] = True
+        whisper_targets[message.from_user.id] = True
 
-# Fungsi untuk menangani inline query
 @app.on_inline_query()
 def inline_query(_, query):
     if query.query.startswith("whisper"):
-        results = []
         username = query.query.split(" ", 1)[-1]
         whisper_targets[query.from_user.id] = username
         button = [
@@ -29,7 +24,7 @@ def inline_query(_, query):
         ]
         markup = InlineKeyboardMarkup(button)
         input_message_content = InputTextMessageContent(f"Pesan rahasia untuk {username}")
-        results.append(
+        results = [
             {
                 "type": "article",
                 "id": "1",
@@ -37,10 +32,9 @@ def inline_query(_, query):
                 "input_message_content": input_message_content,
                 "reply_markup": markup
             }
-        )
+        ]
         query.answer(results)
 
-# Fungsi untuk menangani pesan rahasia
 @app.on_chosen_inline_result()
 def chosen_inline_result(_, result):
     if result.query.startswith("whisper"):
@@ -51,3 +45,8 @@ def chosen_inline_result(_, result):
             app.send_message(result.from_user.id, result_message)
         else:
             app.send_message(result.from_user.id, "Anda tidak memiliki izin untuk melihat pesan ini.")
+
+@app.on_message(filters.mention & filters.private)
+def mention(_, message):
+    user = message.from_user
+    message.reply_text(f"Halo, {user.first_name}!\n\nUntuk mengirim pesan rahasia, ketik /whisper.")
