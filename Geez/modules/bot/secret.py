@@ -1,120 +1,53 @@
-from pyrogram import Client
-from pyrogram.types import InlineQueryResultArticle, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.errors import UsernameInvalid, UsernameNotOccupied, PeerIdInvalid
-
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputTextMessageContent
 from Geez import app
 
-whispers_data = {}
+# Dictionary untuk menyimpan username/id target
+whisper_targets = {}
 
+# Fungsi untuk menangani perintah /start
+@app.on_message(filters.command("start"))
+def start(_, message):
+    message.reply_text("Halo! Saya bot rahasia. Kirimkan pesan rahasia dengan mengetik /whisper.")
 
+# Fungsi untuk menangani perintah /whisper
+@app.on_message(filters.command("whisper"))
+def whisper(_, message):
+    if message.chat.type == "private":
+        message.reply_text("Kirimkan pesan rahasia ini kepada pengguna lain:")
+        whisper_targets[message.chat.id] = True
+
+# Fungsi untuk menangani inline query
 @app.on_inline_query()
-async def answer(_, query):
-    sender = query.from_user.id
-    query_list = query.query.split(" ")
-    if query.query == "":
-        await query.answer(results=main, switch_pm_text="🔒 Learn How to send Whispers", switch_pm_parameter="start")
-    elif len(query_list) == 1:
-        results = await previous_target(sender)
-        await query.answer(results, switch_pm_text="🔒 Learn How to send Whispers", switch_pm_parameter="start")
-    elif len(query_list) >= 2:
-        mentioned_user = query_list[-1]
-        try:
-            mentioned_user = ast.literal_eval(mentioned_user)
-        except (ValueError, SyntaxError):
-            pass
-        if isinstance(mentioned_user, str) and not mentioned_user.startswith("@"):
-            results = await previous_target(sender)
-            await query.answer(results, switch_pm_text="🔒 Learn How to send Whispers", switch_pm_parameter="start")
-            return
-        try:
-            target_user = await app.get_users(mentioned_user)
-            receiver = target_user.id
-            if target_user.last_name:
-                name = target_user.first_name + target_user.last_name
-            else:
-                name = target_user.first_name
-            text1 = f"A whisper message to {name}\n\nOnly he/she can open it."
-            whispers_data[sender] = {"specific": None, "message": text1, "receiver_id": receiver}
-            await query.answer(
-                results=[
-                    InlineQueryResultArticle(
-                        title=text1,
-                        description="🔐 Show Message 🔐",
-                        thumb_url="https://telegra.ph/file/33af12f457b16532e1383.jpg",
-                        reply_markup=InlineKeyboardMarkup(
-                            [
-                                [
-                                    InlineKeyboardButton(
-                                        "🔐 Show Message 🔐",
-                                        callback_data=str([sender, receiver]),
-                                    )
-                                ]
-                            ]
-                        ),
-                    )
-                ],
-                switch_pm_text="🔒 Learn How to send Whispers",
-                switch_pm_parameter="start"
-            )
-            await check_for_users(receiver)
-        except (UsernameInvalid, UsernameNotOccupied, PeerIdInvalid, IndexError):
-            results = await previous_target(sender)
-            await query.answer(results, switch_pm_text="🔒 Learn How to send Whispers", switch_pm_parameter="start")
-
-# Metode untuk menangani peristiwa ketika pengguna memilih sebuah hasil
-@app.on_chosen_inline_result()
-async def chosen_inline_result(_, result):
-    if result.query == "":
-        return
-    sender = result.from_user.id
-    specific = result.inline_message_id
-    try:
-        str_to_list = result.query.split(" ")
-        message = " ".join(str_to_list[:-1])
-        receiver = str_to_list[-1]
-        to_user = await app.get_users(receiver)
-        receiver_id = to_user.id
-        to_user = to_user.__str__()
-        whispers_data[sender] = {"specific": specific, "message": message, "receiver_id": receiver_id}
-        await check_for_users([sender, receiver_id])
-    except (UsernameInvalid, UsernameNotOccupied, PeerIdInvalid, IndexError):
-        message = result.query
-        whispers_data[sender] = {"specific": specific, "message": message}
-        
-
-async def previous_target(sender):
-    q = whispers_data.get(sender)
-    if q and q.get("receiver_id") is not None:
-        target_user = await app.get_users(q["receiver_id"])
-        first_name = target_user.first_name
-        try:
-            last_name = target_user.last_name
-            name = first_name + last_name
-        except KeyError:
-            name = first_name
-        text1 = f"A whisper message to {name}"
-        text2 = "Only he/she can open it."
-        mention = f"[{name}](tg://user?id={q['receiver_id']})"
-        results = [
-              InlineQueryResultArticle(
-                  title=text1,
-                  input_message_content=InputTextMessageContent(
-                      f"A whisper message to {mention}" + " " + text2),
-                  url="https://t.me/StarkBots",
-                  description=text2,
-                  thumb_url="https://telegra.ph/file/33af12f457b16532e1383.jpg",
-                  reply_markup=InlineKeyboardMarkup(
-                      [
-                          [
-                              InlineKeyboardButton(
-                                  "🔐 Show Message 🔐",
-                                  callback_data=str(data_list),
-                              )
-                          ]
-                      ]
-                  ),
-              )
+def inline_query(_, query):
+    if query.query.startswith("whisper"):
+        results = []
+        username = query.query.split(" ", 1)[-1]
+        whisper_targets[query.from_user.id] = username
+        button = [
+            [InlineKeyboardButton("Buka Pesan", switch_inline_query_current_chat=f"whisper {username}")]
         ]
-    else:
-        results = main
-    return results
+        markup = InlineKeyboardMarkup(button)
+        input_message_content = InputTextMessageContent(f"Pesan rahasia untuk {username}")
+        results.append(
+            {
+                "type": "article",
+                "id": "1",
+                "title": "Kirim Pesan Rahasia",
+                "input_message_content": input_message_content,
+                "reply_markup": markup
+            }
+        )
+        query.answer(results)
+
+# Fungsi untuk menangani pesan rahasia
+@app.on_chosen_inline_result()
+def chosen_inline_result(_, result):
+    if result.query.startswith("whisper"):
+        username = result.query.split(" ", 1)[-1]
+        user_id = whisper_targets.get(result.from_user.id)
+        if user_id and username == user_id:
+            result_message = f"Pesan rahasia untuk {username}"
+            app.send_message(result.from_user.id, result_message)
+        else:
+            app.send_message(result.from_user.id, "Anda tidak memiliki izin untuk melihat pesan ini.")
