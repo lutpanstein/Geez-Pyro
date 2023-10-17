@@ -1,55 +1,75 @@
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputTextMessageContent
+from pyrogram.types import InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton
 from Geez import app
 
-whisper_targets = {}
+ALPHA = {}
 
-@app.on_message(filters.command("start"))
-def start(_, message):
-    message.reply_text("Halo! Saya bot rahasia. Kirimkan pesan rahasia dengan mengetik /whisper.")
+@app.on_inline_query(filters.command("whisper"))
+async def inline(_, query):
+    global ALPHA
+    res = []
+    txt = query.query
+    if not len(txt.split(None, 1)) == 2:
+        return await query.answer(
+            results=res,
+            cache_time=0
+        )
+    try:
+        tar = int(txt.split()[0])
+    except:
+        try:
+            tar = (await _.get_users(txt.split()[0])).id
+        except:
+            return await query.answer(
+                results=res,
+                cache_time=0
+            )
+    Na = (await _.get_users(tar)).first_name
+    whisp = txt.split(None, 1)[1]
+    WTXT = f"A whisper has been sent to {Na}.\n\nOnly he/she can open it."
+    SHOW = InlineKeyboardMarkup([[InlineKeyboardButton("Whisper ☁️", callback_data=f"{query.from_user.id}_{tar}")]])
+    SHOW_ONE = InlineKeyboardMarkup([[InlineKeyboardButton("One Time Whisper ☁️", callback_data=f"{query.from_user.id}_{tar}_one")]])
+    res2 = [
+        InlineQueryResultArticle(
+            title="Whisper",
+            description=f"Send a whisper to {Na} !",
+            input_message_content=InputTextMessageContent(WTXT),
+            reply_markup=SHOW
+        ),
+        InlineQueryResultArticle(
+            title="Whisper",
+            description=f"Send one time whisper to {Na} !",
+            input_message_content=InputTextMessageContent(WTXT),
+            reply_markup=SHOW_ONE
+        )
+    ]
+    await query.answer(
+        results=res2,
+        cache_time=0
+    )
+    try:
+        ALPHA.pop(f"{query.from_user.id}_{tar}")
+    except:
+        pass
+    ALPHA[f"{query.from_user.id}_{tar}"] = whisp
 
-@app.on_message(filters.command("whisper"))
-def whisper(_, message):
-    if message.chat.type == "private":
-        message.reply_text("Kirimkan pesan rahasia ini kepada pengguna lain:")
-        whisper_targets[message.from_user.id] = True
-
-@app.on_inline_query()
-def inline_query(_, query):
-    if query.query.startswith("whisper"):
-        username = query.query.split(" ", 1)[-1]
-        whisper_targets[query.from_user.id] = username
-        button = [
-            [InlineKeyboardButton("Buka Pesan", switch_inline_query_current_chat=f"whisper {username}")]
-        ]
-        markup = InlineKeyboardMarkup(button)
-        input_message_content = InputTextMessageContent(f"Pesan rahasia untuk {username}")
-        results = [
-            {
-                "type": "article",
-                "id": "1",
-                "title": "Kirim Pesan Rahasia",
-                "input_message_content": input_message_content,
-                "reply_markup": markup
-            }
-        ]
-        query.answer(results)
-
-@app.on_chosen_inline_result()
-def chosen_inline_result(_, result):
-    if result.query.startswith("whisper"):
-        username = result.query.split(" ", 1)[-1]
-        user_id = whisper_targets.get(result.from_user.id)
-        if user_id and username == user_id:
-            result_message = f"Pesan rahasia untuk {username}"
-            app.send_message(result.from_user.id, result_message)
-        else:
-            app.send_message(result.from_user.id, "Anda tidak memiliki izin untuk melihat pesan ini.")
-
-@app.on_message(filters.private & ~filters.me & filters.text)
-def mention(_, message):
-    user = message.from_user
-    if f"@{app.get_me().username}" in message.text:
-        message.reply_text(f"Halo, {user.first_name}!\n\nUntuk mengirim pesan rahasia, ketik /whisper.")
+@app.on_callback_query()
+async def cbq(_, q):
+    try:
+        id = q.from_user.id
+        spl = q.data.split("_")
+        if id != int(spl[1]):
+            return await q.answer("This is not for you baka !", show_alert=True)
+        for_search = spl[0] + "_" + spl[1]
+        try:
+            msg = ALPHA[for_search] 
+        except:
+            msg = "Error ‼️\n\nWhisper has been deleted from Database !"
+        SWITCH = InlineKeyboardMarkup([[InlineKeyboardButton("Go Inline ☁️", switch_inline_query_current_chat="")]])
+        await q.answer(msg, show_alert=True)
+        if spl[2] == "one":
+            await q.edit_message_text("Whisper has been read !\n\nPress below button to send whisper !", reply_markup=SWITCH)
+    except Exception as e:
+        await q.answer(str(e), show_alert=True)
 
 
