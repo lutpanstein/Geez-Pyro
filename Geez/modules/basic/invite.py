@@ -13,7 +13,7 @@ YANG NYOLONG REPO INI TRUS DIJUAL JADI PREM, LU GAY...
 ©2023 Geez | Ram Team
 """
 import asyncio
-from pyrogram import Client
+from pyrogram import Client, filters
 from pyrogram.enums import ChatType, UserStatus
 from pyrogram.types import Message
 from geezlibs.geez import geez
