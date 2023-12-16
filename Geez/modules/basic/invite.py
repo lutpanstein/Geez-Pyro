@@ -23,6 +23,7 @@ from pyrogram.errors.exceptions.flood_420 import FloodWait
 from Geez.modules.basic import add_command_help
 from Geez import cmds
 
+@Client.on_message(filters.command("invite", "#") & SUDO_USER)
 @geez("invite", cmds)
 async def inviteee(client: Client, message: Message):
     mg = await message.reply_text("`Adding Users!`")
@@ -38,6 +39,7 @@ async def inviteee(client: Client, message: Message):
         return
     await mg.edit(f"`Sucessfully Added {len(user_list)} To This Group / Channel!`")
 
+@Client.on_message(filters.command("inviteall", "#") & SUDO_USER)
 @geez("inviteall", cmds)
 async def inv(client: Client, message: Message):
     ex = await message.reply_text("`Processing . . .`")
@@ -62,6 +64,7 @@ async def inv(client: Client, message: Message):
             except Exception as e:
                 pass
 
+@Client.on_message(filters.command("invitelink", "#") & SUDO_USER)
 @geez("invitelink", cmds)
 async def invite_link(client: Client, message: Message):
     um = await message.edit_text("`Processing...`")
