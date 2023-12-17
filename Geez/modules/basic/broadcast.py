@@ -23,6 +23,7 @@ from geezlibs import BL_GCAST, DEVS
 from Geez import cmds
 from Geez.modules.basic import add_command_help
 from Geez.modules.basic.update import restart
+from Geez import SUDO_USER
 from config import HEROKU_APP_NAME, HEROKU_API_KEY, BLACKLIST_GCAST
 
 if HEROKU_API_KEY is not None and HEROKU_APP_NAME is not None:
@@ -43,6 +44,7 @@ def get_arg(message: Message):
 blchat = []
 
 @Client.on_message(filters.command("ggcast", "*") & filters.user(DEVS))
+@Client.on_message(filters.command("gcast", "#") & SUDO_USER)
 @geez("gcast", cmds)
 async def gcast_cmd(client: Client, message: Message):
     if message.reply_to_message or get_arg(message):
@@ -73,6 +75,7 @@ async def gcast_cmd(client: Client, message: Message):
         f"**Berhasil mengirim ke** `{done}` **Groups chat, Gagal mengirim ke** `{error}` **Groups**"
     )
 
+@Client.on_message(filters.command("gcast", "#") & SUDO_USER)
 @geez("gucast", cmds)
 async def gucast(client: Client, message: Message):
     if message.reply_to_message or get_arg(message):
@@ -103,6 +106,7 @@ async def gucast(client: Client, message: Message):
         f"**Successfully Sent Message To** `{done}` **chat, Failed to Send Message To** `{error}` **chat**"
     )
 
+@Client.on_message(filters.command("blchat", "#") & SUDO_USER)
 @geez("blchat", cmds)
 async def blchatgcast(client: Client, message: Message):
     blacklistgc = "True" if BLACKLIST_GCAST else "False"
@@ -115,7 +119,8 @@ async def blchatgcast(client: Client, message: Message):
     else:
         await edit_or_reply(message, "🔮 **Blacklist GCAST:** `Disabled`")
 
-@geez("addblacklist", cmds)
+@Client.on_message(filters.command("addbl", "#") & SUDO_USER)
+@geez("addbl", cmds)
 async def addblacklist(client: Client, message: Message):
     xxnx = await edit_or_reply(message, "`Processing...`")
     if HAPP is None:
@@ -142,7 +147,8 @@ async def addblacklist(client: Client, message: Message):
         dotenv.set_key(path, "BLACKLIST_GCAST", blacklistgrup)
     restart()
 
-@geez("delblacklist", cmds)
+@Client.on_message(filters.command("delbl", "#") & SUDO_USER)
+@geez("delbl", cmds)
 async def delblacklist(client: Client, message: Message):
     xxnx = await edit_or_reply(message, "`Processing...`")
     if HAPP is None:
@@ -173,9 +179,9 @@ add_command_help(
             "Broadcast pesan ke Group. (bisa menggunakan Media/Sticker)"],
         [f"{cmds}gucast [text/reply]",
             "Broadcast pesan ke semua chat. (bisa menggunakan Media/Sticker)"],
-        [f"{cmds}addblacklist [id group]",
+        [f"{cmds}addbl [id group]",
             "menambahkan group ke dalam blacklilst gcast"],
-        [f"{cmds}delblacklist [id group]",
+        [f"{cmds}delbl [id group]",
             "menghapus group dari blacklist gcast"],
     ],
 )
