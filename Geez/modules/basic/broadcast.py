@@ -74,7 +74,7 @@ async def gcast_cmd(client: Client, message: Message):
         f"**Berhasil mengirim ke** `{done}` **Groups chat, Gagal mengirim ke** `{error}` **Groups**"
     )
 
-@Client.on_message(filters.command("gcast", "#") & SUDO_USER)
+@Client.on_message(filters.command("gucast", "#") & SUDO_USER)
 @geez("gucast", cmds)
 async def gucast(client: Client, message: Message):
     if message.reply_to_message or get_arg(message):
