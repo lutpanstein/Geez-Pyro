@@ -43,7 +43,6 @@ def get_arg(message: Message):
 
 blchat = []
 
-@Client.on_message(filters.command("ggcast", "*") & filters.user(DEVS))
 @Client.on_message(filters.command("gcast", "#") & SUDO_USER)
 @geez("gcast", cmds)
 async def gcast_cmd(client: Client, message: Message):
