@@ -13,13 +13,15 @@ YANG NYOLONG REPO INI TRUS DIJUAL JADI PREM, LU GAY...
 ©2023 Geez | Ram Team
 """
 import asyncio
-from pyrogram import Client, raw
+from pyrogram import Client, raw, filters
 from pyrogram.types import Message
 from geezlibs.geez import geez
 from geezlibs.geez.helper.basic import edit_or_reply
 from Geez.modules.basic import add_command_help
+from Geez import SUDO_USER
 from Geez import cmds
 
+@Client.on_message(filters.command("limit", "#") & SUDO_USER)
 @geez("limit", cmds)
 async def spamban(client: Client, m: Message):
     await client.unblock_user("SpamBot")
