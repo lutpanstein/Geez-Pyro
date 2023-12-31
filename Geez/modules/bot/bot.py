@@ -10,7 +10,7 @@ who Geez and Ram is
 kopas repo dan hapus credit, ga akan jadikan lu seorang developer
 
 YANG NYOLONG REPO INI TRUS DIJUAL JADI PREM, LU GAY...
-©2023 Geez | Ram Team
+©2023 Geez | Ram Team,
 """
 import traceback
 
