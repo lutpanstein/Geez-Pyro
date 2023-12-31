@@ -1,6 +1,6 @@
-<img src="https://telegra.ph/file/c78bb1efdeed38ee16eb2.png">
+<img src="https://telegra.ph/file/97b753a248f764d72d47c.png">
 
-<p align="center"> 🔥 𝗚𝗲𝗲𝘇 𝗣𝘆𝗿𝗼 🔥 </p>
+<p align="center"> 🔥 Lutpanstein Pyrobot 🔥 </p>
 
 - UBOT BIASA GAK ADA YG ISTIMEWA
 
@@ -26,7 +26,7 @@
 
 ## Deploy Geez-Pyro on VPS
 ```console
- $ git clone https://github.com/hitokizzy/Geez-Pyro
+ $ git clone https://github.com/lutpanstein/Geez-Pyro
  $ cd Geez-Pyro
  $ bash setup (isi vars yg diminta)
  $ bash start (bakar roko, nyeduh kopi, nyender...)
@@ -35,7 +35,7 @@
 
 ## Deploy Geez-Pyro on Heroku
 <h3 align="center">Click The Button</h3>
-<a href="https://dashboard.heroku.com/new?button-url=https%3A%2F%2Fgithub.com%2Fvckyou%2FGeez-Pyro&template=https%3A%2F%2Fgithub.com%2Fvckyou%2FGeez-Pyro"><img src="https://www.herokucdn.com/deploy/button.svg"></a>
+<a href="https://dashboard.heroku.com/new?button-url=https%3A%2F%2Fgithub.com%2Fvckyou%2FGeez-Pyro&template=https%3A%2F%2Fgithub.com%2Flutpanstein%2FGeez-Pyro"><img src="https://www.herokucdn.com/deploy/button.svg"></a>
 </div>
 
 ## Disclaimer 
