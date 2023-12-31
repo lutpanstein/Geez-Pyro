@@ -128,11 +128,11 @@ async def pingme(client: Client, message: Message):
     except:
        pass
     duration = (end - start).microseconds / 1000
-    await xx.edit("**Pinging..**")
-    await xx.edit("**Pinging...**")
-    await xx.edit("**Pinging....**")
+    await xx.edit("**kata lutpan lagi test ping ajg..**")
+    await xx.edit("**bentar ya ktllll...**")
+    await xx.edit("**ni ajg pinglu segini....**")
     await asyncio.sleep(1)
-    await xx.edit(f"**Geez - Pyro!!🎈**\n**Pinger** : %sms\n**Bot Uptime** : {uptime}🕛" % (duration))
+    await xx.edit(f"**⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝!!🎈**\n**Pinger** : %sms\n**Bot Uptime** : {uptime}🕛" % (duration))
 
 @Client.on_message(filters.command("ping", "!") & SUDO_USER)
 @geez("ping", cmds)
@@ -144,7 +144,7 @@ async def pings(client, message):
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
     _ping = f"""
-    <b>Geez - Pyro!!🎈</b>
+    <b>⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝!!🎈</b>
     <i> Ping:</i> `{delta_ping} ms`
     <i> Uptime:</i> `{uptime}`
     """

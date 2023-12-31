@@ -33,7 +33,7 @@ async def spamban(client: Client, m: Message):
             start_param="start",
         )
     )
-    wait_msg = await edit_or_reply(m, "`Processing . . .`")
+    wait_msg = await edit_or_reply(m, "`Lagi test limit.. kata lutpan moga limit permanen bang`")
     await asyncio.sleep(1)
     spambot_msg = response.updates[1].message.id + 1
     status = await client.get_messages(chat_id="SpamBot", message_ids=spambot_msg)

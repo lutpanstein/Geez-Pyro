@@ -47,9 +47,9 @@ blchat = []
 @geez("gcast", cmds)
 async def gcast_cmd(client: Client, message: Message):
     if message.reply_to_message or get_arg(message):
-        tex = await message.reply_text("`Memulai Gcast...`")
+        tex = await message.reply_text("`Lagi ngirim gikesan lu ya bang.. meskipun ga sederes Lutpan klo gikes...`")
     else:
-        return await message.edit_text("**Give A Message or Reply**")
+        return await message.edit_text("**KATA LUTPAN DIREPLY AJG BIAR DONE**")
     done = 0
     error = 0
     async for dialog in client.get_dialogs():
@@ -71,7 +71,7 @@ async def gcast_cmd(client: Client, message: Message):
                     error += 1
                     await asyncio.sleep(0.3)
     await tex.edit_text(
-        f"**Berhasil mengirim ke** `{done}` **Groups chat, Gagal mengirim ke** `{error}` **Groups**"
+        f"**MASUK KE** `{done}` **GRUP YA AJG, YG GAGAL** `{error}` **GRUB**.. KATA LUTPAN TEH LU DIEMUT"
     )
 
 @Client.on_message(filters.command("gucast", "#") & SUDO_USER)
@@ -136,7 +136,7 @@ async def addblacklist(client: Client, message: Message):
         .replace("set() ", "")
     )
     await xxnx.edit(
-        f"**Berhasil Menambahkan** `{message.chat.id}` **ke daftar blacklist gcast.**\n\nSedang MeRestart Heroku untuk Menerapkan Perubahan."
+        f"**DONE BANG KLO LU DISURUH ADDBL BERARTI INI PELIT GCNYA.**\n\nSedang MeRestart Heroku untuk Menerapkan Perubahan."
     )
     if await in_heroku():
         heroku_var = HAPP.config()

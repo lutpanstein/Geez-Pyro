@@ -100,9 +100,9 @@ async def end_vc_(client: Client, message: Message):
 async def joinvc(client: Client, message: Message):
     chat_id = message.command[1] if len(message.command) > 1 else message.chat.id
     if message.from_user.id != client.me.id:
-        Man = await message.reply("`Otw Naik...`")
+        Man = await message.reply("`Kata Lutpan lagi otw bang...`")
     else:
-        Man = await message.edit("`Otw Naik....`")
+        Man = await message.edit("`Kata Lutpan lagi otw bang....`")
     with suppress(ValueError):
         chat_id = int(chat_id)
     try:

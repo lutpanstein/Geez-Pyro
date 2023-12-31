@@ -28,10 +28,10 @@ from Geez.modules.basic import add_command_help
 from Geez import cmds
 
 geezlogo = [
-    "https://telegra.ph/file/d03ce0fb84f81be3aeb09.png",
-    "https://telegra.ph/file/200355acbe58c46400f5b.png",
-    "https://telegra.ph/file/c78bb1efdeed38ee16eb2.png",
-    "https://telegra.ph/file/4143843c984a8ecdc813e.png"
+    "https://telegra.ph/file/ad02750e78083a8c57e90.png",
+    "https://telegra.ph/file/ad02750e78083a8c57e90.png",
+    "https://telegra.ph/file/97b753a248f764d72d47c.png",
+    "https://telegra.ph/file/488f04c9ec47bdc347d2e.png"
 ]
 
 alive_logo = ALIVE_PIC or random.choice(geezlogo)
@@ -40,13 +40,13 @@ if ALIVE_TEXT:
    txt = ALIVE_TEXT
 else:
     txt = (
-        f"**Geez Pyro Userbot**\n\n"
+        f"**⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝**\n\n"
         f"〄 **Versi**: `{BOT_VER}`\n"
         f"  ├• **Uptime**: `{str(datetime.now() - START_TIME).split('.')[0]}`\n"
         f"  ├• **Phython**: `{python_version()}`\n"
         f"  ├• **Pyrogram**: `{__version__}`\n"
-        f"  └• **Geez Library**: `{gver}`\n\n"
-        f"©️2023 [Geez|RAM Support](t.me/GeezRam)\n"
+        f"  └• **Lutpan Library**: `{gver}`\n\n"
+        f"©️2023 [ʟᴜᴛᴘᴀɴꜱᴛᴇɪɴ](t.me/Lutpanstein)\n"
     )
 
 @geez("geez", cmds)
