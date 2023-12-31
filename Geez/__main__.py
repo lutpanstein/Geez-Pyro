@@ -10,13 +10,12 @@ from Geez.modules.basic.heroku import geez_log
 from geezlibs.geez.utils.geezlogs import izzy_meira, geezlog
 
 MSG_ON = """
-**Geez Pyro Userbot**
+**⚝𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃⚝**
 ╼┅━━━━━━━━━━╍━━━━━━━━━━┅╾
-**Userbot Version -** `{}`
-**Geez Library Version - `{}`**
-**Ketik** `{}geez` **untuk Mengecheck Bot**
+**𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 𝚟𝚎𝚛𝚜𝚒 -** `{}`
+**Lutpan Library Version - `{}`**
 ╼┅━━━━━━━━━━╍━━━━━━━━━━┅╾
-©️2023 Geez|RAM Projects
+©️2023 ʟᴜᴛᴘᴀɴꜱᴛᴇɪɴ
 """
 
 async def main():
