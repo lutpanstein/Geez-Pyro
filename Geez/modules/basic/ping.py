@@ -120,7 +120,7 @@ async def cpingme(client: Client, message: Message):
 async def pingme(client: Client, message: Message):
     uptime = await get_readable_time((time.time() - StartTime))
     start = datetime.now()
-    xx = await message.reply_text("**Pinging.**")
+    xx = await message.reply_text("**KATA LUTPAN LAGI OTW KONTOL**")
     end = datetime.now()
     await asyncio.sleep(1)
     try:
@@ -128,11 +128,11 @@ async def pingme(client: Client, message: Message):
     except:
        pass
     duration = (end - start).microseconds / 1000
-    await xx.edit("**kata lutpan lagi test ping ajg..**")
-    await xx.edit("**bentar ya ktllll...**")
-    await xx.edit("**ni ajg pinglu segini....**")
-    await asyncio.sleep(1)
-    await xx.edit(f"**⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝!!🎈**\n**Pinger** : %sms\n**Bot Uptime** : {uptime}🕛" % (duration))
+    await xx.edit("**LAGI TEST PINK CUKII..**")
+    await xx.edit("**BENTAR KONTOL...**")
+    await xx.edit("**NI AJG PINGLU SEGINI....**")
+    await asyncio.sleep(2)
+    await xx.edit(f"**⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝ 🏓 **\n**Pinger** : %sms\n**Bot Uptime** : {uptime}🕛" % (duration))
 
 @Client.on_message(filters.command("ping", "!") & SUDO_USER)
 @geez("ping", cmds)
@@ -144,9 +144,9 @@ async def pings(client, message):
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
     _ping = f"""
-    <b>⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝!!🎈</b>
-    <i> Ping:</i> `{delta_ping} ms`
-    <i> Uptime:</i> `{uptime}`
+    <b>⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝ </b>
+    <i> 🐣 **PING** :</i> `{delta_ping} ms`
+    <i> Uptime :</i> `{uptime}`
     """
     await message.reply(_ping)
 
