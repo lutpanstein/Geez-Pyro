@@ -47,7 +47,10 @@ blchat = []
 @geez("gcast", cmds)
 async def gcast_cmd(client: Client, message: Message):
     if message.reply_to_message or get_arg(message):
-        tex = await message.reply_text("**LAGI OTW DIGIKESIN BANG.. KATA LUTPAN MOGA LIMIT PERMANEN**")
+        tex = await message.reply_text("`OTW BANG KATA LUTPAN`")
+               await tex.edit("`KATA LUTPAN KLO GIKES JANGAN DERES²`")
+               await tex.edit("`YANG DERES MOGA LIMIT PERMANEN`")
+               await tex.edit("`KTL`")
     else:
         return await message.edit_text("**KATA LUTPAN DIREPLY AJG BIAR DONE**")
     done = 0
@@ -71,14 +74,14 @@ async def gcast_cmd(client: Client, message: Message):
                     error += 1
                     await asyncio.sleep(0.3)
     await tex.edit_text(
-        f"**MASUK KE** `{done}` **GRUP YA AJG, YG GAGAL** `{error}` **GRUB**.. **KATA LUTPAN LU DIEMUT COK WKWKWKWK**"
+        f"**MASUK KE** `{done}` **GRUP YA AJG, YG GAGAL** `{error}` **GRUB**.. KATA LUTPAN TEH LU DIEMUT"
     )
 
 @Client.on_message(filters.command("gucast", "#") & SUDO_USER)
 @geez("gucast", cmds)
 async def gucast(client: Client, message: Message):
     if message.reply_to_message or get_arg(message):
-        text = await message.reply_text("`OTW BANG...`")
+        text = await message.reply_text("`Started global broadcast...`")
     else:
         return await message.edit_text("**Give A Message or Reply**")
     done = 0
