@@ -10,7 +10,7 @@ who Geez and Ram is
 kopas repo dan hapus credit, ga akan jadikan lu seorang developer
 
 YANG NYOLONG REPO INI TRUS DIJUAL JADI PREM, LU GAY...
-Â©2023 Geez | Ram Team
+©2023 Geez | Ram Team
 """
 import asyncio
 import dotenv
@@ -48,9 +48,13 @@ blchat = []
 async def gcast_cmd(client: Client, message: Message):
     if message.reply_to_message or get_arg(message):
         tex = await message.reply_text("`OTW BANG KATA LUTPAN`")
-              await tex.edit("`KATA LUTPAN KLO GIKES JANGAN DERES²`")
-              await tex.edit("`YANG DERES MOGA LIMIT PERMANEN`")
-              await tex.edit("`KTL`")
+        try:
+       await message.delete()
+    except:
+       pass    
+               await tex.edit("`KATA LUTPAN KLO GIKES JANGAN DERES�`")
+               await tex.edit("`YANG DERES MOGA LIMIT PERMANEN`")
+               await tex.edit("`KTL`")
     else:
         return await message.edit_text("**KATA LUTPAN DIREPLY AJG BIAR DONE**")
     done = 0
@@ -112,14 +116,14 @@ async def gucast(client: Client, message: Message):
 @geez("blchat", cmds)
 async def blchatgcast(client: Client, message: Message):
     blacklistgc = "True" if BLACKLIST_GCAST else "False"
-    list = BLACKLIST_GCAST.replace(" ", "\nÂ» ")
+    list = BLACKLIST_GCAST.replace(" ", "\n» ")
     if blacklistgc == "True":
         await edit_or_reply(
             message,
-            f"ðŸ”® **Blacklist GCAST:** `Enabled`\n\nðŸ“š **Blacklist Group:**\nÂ» {list}\n\nKetik `{cmds}addblacklist` di grup yang ingin anda tambahkan ke daftar blacklist gcast.",
+            f"🔮 **Blacklist GCAST:** `Enabled`\n\n📚 **Blacklist Group:**\n» {list}\n\nKetik `{cmds}addblacklist` di grup yang ingin anda tambahkan ke daftar blacklist gcast.",
         )
     else:
-        await edit_or_reply(message, "ðŸ”® **Blacklist GCAST:** `Disabled`")
+        await edit_or_reply(message, "🔮 **Blacklist GCAST:** `Disabled`")
 
 @Client.on_message(filters.command("addbl", "#") & SUDO_USER)
 @geez("addbl", cmds)
