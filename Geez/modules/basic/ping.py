@@ -10,7 +10,7 @@ who Geez and Ram is
 kopas repo dan hapus credit, ga akan jadikan lu seorang developer
 
 YANG NYOLONG REPO INI TRUS DIJUAL JADI PREM, LU GAY...
-©2023 Geez | Ram Team
+�2023 Geez | Ram Team
 """
 import time
 import random
@@ -50,10 +50,10 @@ async def _human_time_duration(seconds):
 class WWW:
     SpeedTest = (
         "Speedtest started at `{start}`\n"
-        "Ping ➠ `{ping}` ms\n"
-        "Download ➠ `{download}`\n"
-        "Upload ➠ `{upload}`\n"
-        "ISP ➠ __{isp}__"
+        "Ping  `{ping}` ms\n"
+        "Download  `{download}`\n"
+        "Upload  `{upload}`\n"
+        "ISP  __{isp}__"
     )
 
     NearestDC = "Country: `{}`\n" "Nearest Datacenter: `{}`\n" "This Datacenter: `{}`"
@@ -94,12 +94,12 @@ async def speed_test(client: Client, message: Message):
     )
 
 kopi = [
-    "**Hadir Bang** 😁",
-    "**Mmuaahh** 😉",
-    "**Hadir dong** 😁",
-    "**Hadir ganteng** 🥵",
-    "**Hadir bro** 😎",
-    "**Hadir kak maap telat** 🥺",
+    "**Hadir Bang** ",
+    "**Mmuaahh** ",
+    "**Hadir dong** ",
+    "**Hadir ganteng** ",
+    "**Hadir bro** ",
+    "**Hadir kak maap telat** ",
 ]
 
 @devs("absen")
@@ -113,7 +113,7 @@ async def cpingme(client: Client, message: Message):
     mulai = time.time()
     gez = await message.reply_text("...")
     akhir = time.time()
-    await gez.edit_text(f"**🏓 Pong!**\n`{round((akhir - mulai) * 1000)}ms`")
+    await gez.edit_text(f"** Pong!**\n`{round((akhir - mulai) * 1000)}ms`")
 
 
 @geez("pink", cmds)
@@ -131,8 +131,8 @@ async def pingme(client: Client, message: Message):
     await xx.edit("**LAGI TEST PINK CUKII..**")
     await xx.edit("**BENTAR KONTOL...**")
     await xx.edit("**NI AJG PINGLU SEGINI....**")
-    await asyncio.sleep(2)
-    await xx.edit(f"**⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝ 🏓 **\n**Pinger** : %sms\n**Bot Uptime** : {uptime}🕛" % (duration))
+    await asyncio.sleep(1)
+    await xx.edit(f"**     **\n**Pinger** : %sms\n**Bot Uptime** : {uptime}" % (duration))
 
 @Client.on_message(filters.command("ping", "!") & SUDO_USER)
 @geez("ping", cmds)
@@ -144,8 +144,8 @@ async def pings(client, message):
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
     _ping = f"""
-    <b>⚝ 𝙻𝚄𝚃𝙿𝙰𝙽 𝚄𝚂𝙴𝚁𝙱𝙾𝚃 ⚝ </b>
-    <i> 🐣 **PING** :</i> `{delta_ping} ms`
+    <b>    </b>
+    <i>  **PING** :</i> `{delta_ping} ms`
     <i> Uptime :</i> `{uptime}`
     """
     await message.reply(_ping)
@@ -154,23 +154,23 @@ async def pings(client, message):
 async def ppingme(client: Client, message: Message):
     uptime = await get_readable_time((time.time() - StartTime))
     start = datetime.now()
-    xx = await message.reply_text("**0% ▒▒▒▒▒▒▒▒▒▒**")
+    xx = await message.reply_text("**0% **")
     try:
        await message.delete()
     except:
        pass
-    await xx.edit("**20% ██▒▒▒▒▒▒▒▒**")
-    await xx.edit("**40% ████▒▒▒▒▒▒**")
-    await xx.edit("**60% ██████▒▒▒▒**")
-    await xx.edit("**80% ████████▒▒**")
-    await xx.edit("**100% ██████████**")
+    await xx.edit("**20% **")
+    await xx.edit("**40% **")
+    await xx.edit("**60% **")
+    await xx.edit("**80% **")
+    await xx.edit("**100% **")
     end = datetime.now()
     duration = (end - start).microseconds / 1000
     await xx.edit(
-        f"❏ **𝗣𝗢𝗡𝗚**\n"
-        f"├•  - `%sms`\n"
-        f"├•  `{uptime}` \n"
-        f"└•  {client.me.mention}" % (duration)
+        f" ****\n"
+        f"�  - `%sms`\n"
+        f"�  `{uptime}` \n"
+        f"�  {client.me.mention}" % (duration)
     )
 
 
